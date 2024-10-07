@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profession Form / پیشہ فارم</title>
+    <title>Combined Form / مشترکہ فارم</title>
     <meta charset="UTF-8">
     <!-- Include jQuery from CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -55,6 +55,9 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 16px;
+        }
+        textarea {
+            height: auto;
         }
         label {
             font-weight: bold;
@@ -130,6 +133,10 @@
             font-size: 14px;
             color: #777;
         }
+        /* Business Fields */
+        #businessFields {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -147,6 +154,7 @@
     </p>
 
     <form id="professionForm">
+        <!-- Personal Information Fields -->
         <div class="select-container">
             <label for="salutation">Salutation / تعارف:</label>
             <select id="salutation" name="salutation" required>
@@ -156,7 +164,6 @@
                 <option value="Mrs. / محترمہ">Mrs. / محترمہ</option>
                 <option value="Dr. / ڈاکٹر">Dr. / ڈاکٹر</option>
                 <option value="Prof. / پروفیسر">Prof. / پروفیسر</option>
-                <!-- Add more salutations if needed -->
             </select>
         </div>
 
@@ -178,6 +185,7 @@
         <label for="address">Address / پتہ:</label>
         <textarea id="address" name="address" rows="6" placeholder="Enter your address / اپنا پتہ درج کریں" required></textarea>
 
+        <!-- Category Selection -->
         <div class="select-container">
             <label for="category">Category / زمرہ:</label>
             <select id="category" name="category" required>
@@ -185,11 +193,52 @@
             </select>
         </div>
 
+        <!-- Profession Selection -->
         <div class="select-container">
             <label for="profession">Profession / پیشہ:</label>
             <select id="profession" name="profession" required>
                 <option value="">Select Profession / پیشہ منتخب کریں</option>
             </select>
+        </div>
+
+        <!-- Business Fields -->
+        <div id="businessFields" style="display: none;">
+            <label for="businessName">Business Name / کاروبار کا نام:</label>
+            <input type="text" id="businessName" name="businessName" placeholder="Enter your business name / اپنا کاروبار کا نام درج کریں">
+
+            <label for="businessType">Business Type / کاروبار کی قسم:</label>
+            <select id="businessType" name="businessType">
+                <option value="">Select Business Type / کاروبار کی قسم منتخب کریں</option>
+                <option value="Retail">Retail / ریٹیل</option>
+                <option value="Manufacturing">Manufacturing / مینوفیکچرنگ</option>
+                <option value="Service">Service / سروس</option>
+                <option value="Wholesale">Wholesale / ہول سیل</option>
+                <option value="E-commerce">E-commerce / ای کامرس</option>
+                <option value="Other">Other / دیگر</option>
+            </select>
+
+            <label for="businessSize">Business Size / کاروبار کا سائز:</label>
+            <select id="businessSize" name="businessSize">
+                <option value="">Select Business Size / کاروبار کا سائز منتخب کریں</option>
+                <option value="Small (1-10 employees)">Small (1-10 employees) / چھوٹا (1-10 ملازمین)</option>
+                <option value="Medium (11-50 employees)">Medium (11-50 employees) / درمیانہ (11-50 ملازمین)</option>
+                <option value="Large (51+ employees)">Large (51+ employees) / بڑا (51+ ملازمین)</option>
+            </select>
+
+            <label for="businessDescription">Business Description / کاروبار کی تفصیل:</label>
+            <textarea id="businessDescription" name="businessDescription" rows="4" placeholder="Describe your business, its products or services / اپنے کاروبار، اس کی مصنوعات یا خدمات کی تفصیل بیان کریں"></textarea>
+
+            <label for="digitalPresence">Digital Presence / ڈیجیٹل موجودگی:</label>
+            <select id="digitalPresence" name="digitalPresence">
+                <option value="">Select Digital Presence / ڈیجیٹل موجودگی منتخب کریں</option>
+                <option value="Website">Website / ویب سائٹ</option>
+                <option value="Social Media">Social Media / سوشل میڈیا</option>
+                <option value="Both Website and Social Media">Both Website and Social Media / دونوں ویب سائٹ اور سوشل میڈیا</option>
+                <option value="None">None / کوئی نہیں</option>
+            </select>
+
+            <label for="website">Website URL (if any) / ویب سائٹ کا پتہ (اگر کوئی ہے):</label>
+            <input type="url" id="website" name="website" placeholder="Enter your website URL / اپنی ویب سائٹ کا پتہ درج کریں">
         </div>
 
         <button type="submit"><i class="fas fa-paper-plane"></i> Submit / جمع کریں</button>
@@ -198,7 +247,9 @@
 
 <footer>
     &copy; 2023 Zainabians SP Group. All rights reserved.
-</footer><!-- Include Select2 JS -->
+</footer>
+
+<!-- Include Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
@@ -414,12 +465,15 @@ $(document).ready(function() {
             "Physicist - طبیعیات دان": "fa-solid fa-atom",
             "Environmental Scientist - ماحولیاتی سائنسدان": "fa-solid fa-leaf"
         }
-    }
+    },
+    "Business": {
+            "icon": "fa-solid fa-briefcase",
+            "professions": {} // Empty professions since we handle Business differently
+        }
 };
 
-// Disable profession dropdown by default
-$// Populate categories with icons
-var categorySelect = $('#category');
+    // Populate categories with icons
+    var categorySelect = $('#category');
     $.each(data, function(key, value) {
         var iconClass = value.icon;
         var option = $('<option></option>')
@@ -439,8 +493,23 @@ var categorySelect = $('#category');
         professionSelect.empty();
         professionSelect.append($('<option></option>').attr('value', '').text('Select Profession / پیشہ منتخب کریں'));
 
-        if (category != '') {
-            var professions = data[category].professions;
+        if (category === 'Business') {
+            // Hide the profession select and show business fields
+            $('.select-container:has(#profession)').hide();
+            $('#businessFields').slideDown();
+
+            // Disable profession select
+            $('#profession').prop('disabled', true);
+        } else if (category !== '') {
+            // Show the profession select and hide business fields
+            $('.select-container:has(#profession)').show();
+            $('#businessFields').slideUp();
+
+            // Enable profession select
+            $('#profession').prop('disabled', false);
+
+            // Populate professions based on selected category
+            var professions = data[category]?.professions || {};
             $.each(professions, function(professionKey, iconClass) {
                 var option = $('<option></option>')
                     .attr('value', professionKey)
@@ -448,13 +517,20 @@ var categorySelect = $('#category');
                     .text(professionKey);
                 professionSelect.append(option);
             });
-
-            // Enable the profession dropdown when category is selected
-            professionSelect.prop('disabled', false);
         } else {
-            // If no category is selected, keep the profession dropdown disabled
-            professionSelect.prop('disabled', true);
+            // If no category is selected, hide profession select and business fields
+            $('.select-container:has(#profession)').show();
+            $('#profession').prop('disabled', true);
+            $('#businessFields').slideUp();
         }
+
+        // Initialize or refresh Select2
+        $('#profession').select2({
+            templateResult: formatOption,
+            templateSelection: formatOption,
+            minimumResultsForSearch: Infinity,
+            width: '100%'
+        });
     });
 
     // Function to format the options with icons
@@ -482,27 +558,66 @@ var categorySelect = $('#category');
     $('#professionForm').on('submit', function(event) {
         event.preventDefault();
 
+        // Validate if category is selected
+        if ($('#category').val() === '') {
+            alert('Please select a category before submitting the form.');
+            $('#category').focus();
+            return false;
+        }
+
         // Collect form data
         var salutation = $('#salutation').val();
         var firstName = $('#firstName').val();
         var middleName = $('#middleName').val() || '';
         var lastName = $('#lastName').val();
-        var fullName = salutation + ' ' + firstName + ' ' + middleName + ' ' + lastName;
-        fullName = fullName.replace(/\s+/g, ' ').trim(); // Remove extra spaces
+        var fullName = [salutation, firstName, middleName, lastName].join(' ').replace(/\s+/g, ' ').trim();
 
         var phone = $('#phone').val();
         var email = $('#email').val() || 'N/A';
         var address = $('#address').val();
         var category = $('#category option:selected').text();
-        var profession = $('#profession option:selected').text();
+        var profession = $('#profession option:selected').text() || 'N/A';
 
-        // Construct the message with improved formatting
+        // Initialize message
         var message = '*Name / نام*: ' + fullName + '\n' +
                       '*Phone Number / فون نمبر*: ' + phone + '\n' +
                       '*Email Address / ای میل ایڈریس*: ' + email + '\n' +
                       '*Address / پتہ*: ' + address + '\n' +
-                      '*Category / زمرہ*: ' + category + '\n' +
-                      '*Profession / پیشہ*: ' + profession;
+                      '*Category / زمرہ*: ' + category;
+
+        // Append profession or business information
+        if ($('#category').val() === 'Business') {
+            var businessName = $('#businessName').val() || 'N/A';
+            var businessType = $('#businessType').val() || 'N/A';
+            var businessSize = $('#businessSize').val() || 'N/A';
+            var businessDescription = $('#businessDescription').val() || 'N/A';
+            var digitalPresence = $('#digitalPresence').val() || 'N/A';
+            var website = $('#website').val() || 'N/A';
+
+            // Validate business name
+            if (businessName.trim() === '') {
+                alert('Please enter your business name.');
+                $('#businessName').focus();
+                return false;
+            }
+
+            message += '\n*Business Name / کاروبار کا نام*: ' + businessName +
+                       '\n*Business Type / کاروبار کی قسم*: ' + businessType +
+                       '\n*Business Size / کاروبار کا سائز*: ' + businessSize +
+                       '\n*Business Description / کاروبار کی تفصیل*: ' + businessDescription +
+                       '\n*Digital Presence / ڈیجیٹل موجودگی*: ' + digitalPresence +
+                       '\n*Website / ویب سائٹ*: ' + website;
+        } else {
+            // Validate profession
+            if ($('#profession').val() === '') {
+                alert('Please select a profession before submitting the form.');
+                $('#profession').focus();
+                return false;
+            }
+
+            message += '\n*Profession / پیشہ*: ' + profession;
+        }
+
         // Encode the message
         var encodedMessage = encodeURIComponent(message);
 
