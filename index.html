@@ -417,9 +417,9 @@ $(document).ready(function() {
     }
 };
 
-
-    // Populate categories with icons
-    var categorySelect = $('#category');
+// Disable profession dropdown by default
+$// Populate categories with icons
+var categorySelect = $('#category');
     $.each(data, function(key, value) {
         var iconClass = value.icon;
         var option = $('<option></option>')
@@ -429,12 +429,16 @@ $(document).ready(function() {
         categorySelect.append(option);
     });
 
+    // Disable profession dropdown by default
+    $('#profession').prop('disabled', true);
+
     // Update professions when category changes
     $('#category').on('change', function() {
         var category = $(this).val();
         var professionSelect = $('#profession');
         professionSelect.empty();
-        professionSelect.append($('<option></option>').attr('value', '').text('Select Profession'));
+        professionSelect.append($('<option></option>').attr('value', '').text('Select Profession / پیشہ منتخب کریں'));
+
         if (category != '') {
             var professions = data[category].professions;
             $.each(professions, function(professionKey, iconClass) {
@@ -444,6 +448,12 @@ $(document).ready(function() {
                     .text(professionKey);
                 professionSelect.append(option);
             });
+
+            // Enable the profession dropdown when category is selected
+            professionSelect.prop('disabled', false);
+        } else {
+            // If no category is selected, keep the profession dropdown disabled
+            professionSelect.prop('disabled', true);
         }
     });
 
