@@ -137,6 +137,11 @@
         #businessFields {
             margin-top: 20px;
         }
+        /* Other Category/Profession Inputs */
+        .other-input {
+            display: none;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 <body>
@@ -193,12 +198,24 @@
             </select>
         </div>
 
+        <!-- Other Category Input -->
+        <div class="other-input" id="otherCategoryContainer">
+            <label for="otherCategory">Please specify your category / براہ کرم اپنا زمرہ درج کریں:</label>
+            <input type="text" id="otherCategory" name="otherCategory" placeholder="Enter your category / اپنا زمرہ درج کریں">
+        </div>
+
         <!-- Profession Selection -->
         <div class="select-container">
             <label for="profession">Profession / پیشہ:</label>
             <select id="profession" name="profession" required>
                 <option value="">Select Profession / پیشہ منتخب کریں</option>
             </select>
+        </div>
+
+        <!-- Other Profession Input -->
+        <div class="other-input" id="otherProfessionContainer">
+            <label for="otherProfession">Please specify your profession / براہ کرم اپنا پیشہ درج کریں:</label>
+            <input type="text" id="otherProfession" name="otherProfession" placeholder="Enter your profession / اپنا پیشہ درج کریں">
         </div>
 
         <!-- Business Fields -->
@@ -255,222 +272,266 @@
 $(document).ready(function() {
     // Define categories with associated icons and professions with icons
     var data = {
-    "Medical and Healthcare (طبی اور صحت کی دیکھ بھال)": {
-        "icon": "fa-solid fa-stethoscope",
-        "professions": {
-            "Doctor (General Practitioner, Surgeon, Specialist) - ڈاکٹر (عام معالج، سرجن، ماہر)": "fa-solid fa-user-md",
-            "Nurse - نرس": "fa-solid fa-user-nurse",
-            "Pharmacist - فارماسسٹ": "fa-solid fa-pills",
-            "Medical Laboratory Technician - میڈیکل لیب ٹیکنیشن": "fa-solid fa-vial",
-            "Physiotherapist - فزیوتھراپسٹ": "fa-solid fa-hand-holding-medical",
-            "Dentist - دندان ساز": "fa-solid fa-tooth",
-            "Radiologist - ریڈیولوجسٹ": "fa-solid fa-x-ray",
-            "Medical Transcriptionist - میڈیکل ٹرانسکرپشنسٹ": "fa-solid fa-keyboard",
-            "Pathologist - پیتھالوجسٹ": "fa-solid fa-microscope",
-            "Healthcare Administrator - صحت کی دیکھ بھال کے ایڈمنسٹریٹر": "fa-solid fa-hospital-user"
-        }
-    },
-    "Engineering and Technology (انجینئرنگ اور ٹیکنالوجی)": {
-        "icon": "fa-solid fa-cogs",
-        "professions": {
-            "Software Engineer/Developer - سافٹ ویئر انجینئر/ڈویلپر": "fa-solid fa-code",
-            "Civil Engineer - سول انجینئر": "fa-solid fa-building",
-            "Mechanical Engineer - مکینیکل انجینئر": "fa-solid fa-tools",
-            "Electrical Engineer - الیکٹریکل انجینئر": "fa-solid fa-bolt",
-            "Electronics and Communication Engineer - الیکٹرانکس اور مواصلاتی انجینئر": "fa-solid fa-microchip",
-            "Data Scientist - ڈیٹا سائنسدان": "fa-solid fa-database",
-            "AI/ML Engineer - اے آئی/ایم ایل انجینئر": "fa-solid fa-robot",
-            "Network Engineer - نیٹ ورک انجینئر": "fa-solid fa-network-wired",
-            "Systems Administrator - سسٹمز ایڈمنسٹریٹر": "fa-solid fa-server",
-            "DevOps Engineer - ڈیو اوپس انجینئر": "fa-solid fa-sync-alt",
-            "Industrial Engineer - صنعتی انجینئر": "fa-solid fa-industry"
-        }
-    },
-    "Education (تعلیم)": {
-        "icon": "fa-solid fa-graduation-cap",
-        "professions": {
-            "Teacher (Primary, Secondary, Higher Education) - استاد (پرائمری، سیکنڈری، اعلیٰ تعلیم)": "fa-solid fa-chalkboard-teacher",
-            "Professor/Lecturer - پروفیسر/لیکچرر": "fa-solid fa-user-graduate",
-            "School Administrator/Principal - اسکول ایڈمنسٹریٹر/پرنسپل": "fa-solid fa-school",
-            "Private Tutor - نجی ٹیچر": "fa-solid fa-user-edit",
-            "Educational Counselor - تعلیمی مشیر": "fa-solid fa-user-tie",
-            "Educational Content Developer - تعلیمی مواد تیار کرنے والا": "fa-solid fa-book",
-            "Research Scholar - تحقیقی عالم": "fa-solid fa-flask",
-            "Librarian - لائبریرین": "fa-solid fa-book-open"
-        }
-    },
-    "Business and Finance (کاروبار اور مالیات)": {
-        "icon": "fa-solid fa-briefcase",
-        "professions": {
-            "Accountant - اکاؤنٹنٹ": "fa-solid fa-calculator",
-            "Chartered Accountant (CA) - چارٹرڈ اکاؤنٹنٹ (سی اے)": "fa-solid fa-chart-line",
-            "Financial Analyst - مالیاتی تجزیہ کار": "fa-solid fa-chart-pie",
-            "Investment Banker - سرمایہ کاری بینکر": "fa-solid fa-university",
-            "Business Consultant - کاروباری مشیر": "fa-solid fa-comments-dollar",
-            "Human Resource Manager - انسانی وسائل کے مینیجر": "fa-solid fa-users-cog",
-            "Marketing Manager - مارکیٹنگ مینیجر": "fa-solid fa-bullhorn",
-            "Sales Executive - سیلز ایگزیکٹو": "fa-solid fa-handshake",
-            "Operations Manager - آپریشنز مینیجر": "fa-solid fa-tasks",
-            "Tax Consultant - ٹیکس کنسلٹنٹ": "fa-solid fa-file-invoice-dollar"
-        }
-    },
-    "Government and Public Services (سرکاری اور عوامی خدمات)": {
-        "icon": "fa-solid fa-landmark",
-        "professions": {
-            "IAS/IPS/IFS Officer - آئی اے ایس/آئی پی ایس/آئی ایف ایس افسر": "fa-solid fa-user-shield",
-            "Government Clerk - سرکاری کلرک": "fa-solid fa-file-alt",
-            "Railway Officer - ریلوے افسر": "fa-solid fa-train",
-            "Public Sector Undertaking (PSU) Employee - پبلک سیکٹر انڈرٹیکنگ (پی ایس یو) ملازم": "fa-solid fa-industry",
-            "Defense Officer (Army, Navy, Air Force) - دفاعی افسر (آرمی، نیوی، ایئر فورس)": "fa-solid fa-shield-alt",
-            "Police Officer - پولیس افسر": "fa-solid fa-user-shield",
-            "Municipal Officer - میونسپل افسر": "fa-solid fa-city"
-        }
-    },
-    "Legal Profession (قانونی پیشہ)": {
-        "icon": "fa-solid fa-balance-scale",
-        "professions": {
-            "Lawyer/Advocate - وکیل/ایڈووکیٹ": "fa-solid fa-gavel",
-            "Legal Consultant - قانونی مشیر": "fa-solid fa-handshake",
-            "Judge - جج": "fa-solid fa-balance-scale",
-            "Notary - نوٹری": "fa-solid fa-stamp",
-            "Public Prosecutor - سرکاری وکیل": "fa-solid fa-gavel",
-            "Legal Advisor - قانونی مشیر": "fa-solid fa-user-tie"
-        }
-    },
-    "Creative Arts and Media (تخلیقی فنون اور میڈیا)": {
-        "icon": "fa-solid fa-palette",
-        "professions": {
-            "Graphic Designer - گرافک ڈیزائنر": "fa-solid fa-pencil-ruler",
-            "Content Writer/Copywriter - مواد لکھنے والا/کاپی رائٹر": "fa-solid fa-pen-nib",
-            "Journalist/Reporter - صحافی/رپورٹر": "fa-solid fa-newspaper",
-            "Photographer - فوٹوگرافر": "fa-solid fa-camera",
-            "Videographer - ویڈیو گرافر": "fa-solid fa-video",
-            "Animator - انیمیٹر": "fa-solid fa-film",
-            "Painter - مصور": "fa-solid fa-paint-brush",
-            "Scriptwriter - اسکرپٹ رائٹر": "fa-solid fa-scroll"
-        }
-    },
-    "Hospitality and Tourism (مہمان نوازی اور سیاحت)": {
-        "icon": "fa-solid fa-concierge-bell",
-        "professions": {
-            "Hotel Manager - ہوٹل مینیجر": "fa-solid fa-hotel",
-            "Chef - شیف": "fa-solid fa-utensils",
-            "Travel Agent - ٹریول ایجنٹ": "fa-solid fa-plane",
-            "Tour Guide - ٹور گائیڈ": "fa-solid fa-map-signs",
-            "Event Planner - ایونٹ پلانر": "fa-solid fa-calendar-check",
-            "Front Desk Executive - فرنٹ ڈیسک ایگزیکٹو": "fa-solid fa-concierge-bell",
-            "Housekeeping Staff - ہاؤس کیپنگ عملہ": "fa-solid fa-broom",
-            "Restaurant Manager - ریستوراں مینیجر": "fa-solid fa-wine-glass-alt"
-        }
-    },
-    "Agriculture and Allied Services (زراعت اور متعلقہ خدمات)": {
-        "icon": "fa-solid fa-tractor",
-        "professions": {
-            "Farmer - کسان": "fa-solid fa-seedling",
-            "Horticulturist - باغبان": "fa-solid fa-leaf",
-            "Agricultural Scientist - زرعی سائنسدان": "fa-solid fa-flask",
-            "Dairy Farmer - ڈیری کسان": "fa-solid fa-cheese",
-            "Fisheries Specialist - فشریز ماہر": "fa-solid fa-fish",
-            "Agricultural Equipment Operator - زرعی آلات آپریٹر": "fa-solid fa-tractor"
-        }
-    },
-    "Trades and Technical Services (تجارت اور تکنیکی خدمات)": {
-        "icon": "fa-solid fa-hammer",
-        "professions": {
-            "Electrician - الیکٹریشن": "fa-solid fa-bolt",
-            "Plumber - پلمبر": "fa-solid fa-wrench",
-            "Carpenter - بڑھئی": "fa-solid fa-hammer",
-            "Mechanic (Automobile, Machine Repair) - میکینک (آٹوموبائل، مشین مرمت)": "fa-solid fa-tools",
-            "Welder - ویلڈر": "fa-solid fa-fire",
-            "Construction Worker - تعمیراتی کارکن": "fa-solid fa-hard-hat",
-            "HVAC Technician - ایچ وی اے سی ٹیکنیشن": "fa-solid fa-fan"
-        }
-    },
-    "Retail and E-commerce (خوردہ اور ای کامرس)": {
-        "icon": "fa-solid fa-shopping-cart",
-        "professions": {
-            "Retail Store Manager - خوردہ اسٹور مینیجر": "fa-solid fa-store",
-            "Sales Executive - سیلز ایگزیکٹو": "fa-solid fa-tag",
-            "Inventory Manager - انوینٹری مینیجر": "fa-solid fa-boxes",
-            "E-commerce Specialist - ای کامرس ماہر": "fa-solid fa-shopping-bag",
-            "Customer Service Representative - کسٹمر سروس کے نمائندہ": "fa-solid fa-headset"
-        }
-    },
-    "Arts and Design (فن اور ڈیزائن)": {
-        "icon": "fa-solid fa-palette",
-        "professions": {
-            "Fashion Designer/Tailoring - فیشن ڈیزائنر/درزی": "fa-solid fa-tshirt",
-            "Interior Designer - انٹیریئر ڈیزائنر": "fa-solid fa-couch",
-            "Architect - معمار": "fa-solid fa-drafting-compass",
-            "Beautician - بیوٹیشن": "fa-solid fa-magic",
-            "Mehndi Artist - مہندی آرٹسٹ": "fa-solid fa-hand-paper",
-            "Fine Artist - عمدہ آرٹسٹ": "fa-solid fa-paint-brush",
-            "Jewelry Designer - جیولری ڈیزائنر": "fa-solid fa-gem"
-        }
-    },
-    "Banking and Insurance (بینکاری اور انشورنس)": {
-        "icon": "fa-solid fa-piggy-bank",
-        "professions": {
-            "Bank Clerk - بینک کلرک": "fa-solid fa-receipt",
-            "Bank Manager - بینک مینیجر": "fa-solid fa-university",
-            "Loan Officer - قرض افسر": "fa-solid fa-hand-holding-usd",
-            "Insurance Agent - انشورنس ایجنٹ": "fa-solid fa-user-shield",
-            "Actuary - ایکچوری": "fa-solid fa-calculator"
-        }
-    },
-    "Information Technology (آئی ٹی)": {
-        "icon": "fa-solid fa-desktop",
-        "professions": {
-            "IT Consultant - آئی ٹی کنسلٹنٹ": "fa-solid fa-laptop-code",
-            "Cybersecurity Analyst - سائبرسیکیورٹی تجزیہ کار": "fa-solid fa-user-secret",
-            "Software Tester - سافٹ ویئر ٹیسٹر": "fa-solid fa-vial",
-            "Web Developer - ویب ڈویلپر": "fa-solid fa-code",
-            "Mobile App Developer - موبائل ایپ ڈویلپر": "fa-solid fa-mobile-alt"
-        }
-    },
-    "Transportation and Logistics (نقل و حمل اور لاجسٹکس)": {
-        "icon": "fa-solid fa-shipping-fast",
-        "professions": {
-            "Pilot - پائلٹ": "fa-solid fa-plane",
-            "Train Driver - ٹرین ڈرائیور": "fa-solid fa-subway",
-            "Truck Driver - ٹرک ڈرائیور": "fa-solid fa-truck",
-            "Logistician - لاجسٹکس ماہر": "fa-solid fa-boxes",
-            "Supply Chain Manager - سپلائی چین مینیجر": "fa-solid fa-dolly-flatbed"
-        }
-    },
-    "Social Services (سماجی خدمات)": {
-        "icon": "fa-solid fa-hands-helping",
-        "professions": {
-            "Social Worker - سماجی کارکن": "fa-solid fa-handshake",
-            "NGO Manager - این جی او مینیجر": "fa-solid fa-users",
-            "Child Welfare Officer - بچوں کی فلاح و بہبود کا افسر": "fa-solid fa-child",
-            "Community Health Worker - کمیونٹی ہیلتھ ورکر": "fa-solid fa-people-arrows"
-        }
-    },
-    "Real Estate (رئیل اسٹیٹ)": {
-        "icon": "fa-solid fa-building",
-        "professions": {
-            "Real Estate Agent - رئیل اسٹیٹ ایجنٹ": "fa-solid fa-home",
-            "Property Developer - پراپرٹی ڈویلپر": "fa-solid fa-city",
-            "Surveyor - سروئیر": "fa-solid fa-ruler-combined",
-            "Property Manager - پراپرٹی مینیجر": "fa-solid fa-building"
-        }
-    },
-    "Science and Research (سائنس اور تحقیق)": {
-        "icon": "fa-solid fa-atom",
-        "professions": {
-            "Research Scientist - تحقیقی سائنسدان": "fa-solid fa-flask",
-            "Biotechnologist - بایوٹیکنالوجسٹ": "fa-solid fa-dna",
-            "Chemist - کیمسٹ": "fa-solid fa-vial",
-            "Physicist - طبیعیات دان": "fa-solid fa-atom",
-            "Environmental Scientist - ماحولیاتی سائنسدان": "fa-solid fa-leaf"
-        }
-    },
+        "Medical and Healthcare (طبی اور صحت کی دیکھ بھال)": {
+            "icon": "fa-solid fa-stethoscope",
+            "professions": {
+                "Doctor (General Practitioner, Surgeon, Specialist) - ڈاکٹر (عام معالج، سرجن، ماہر)": "fa-solid fa-user-md",
+                "Nurse - نرس": "fa-solid fa-user-nurse",
+                "Pharmacist - فارماسسٹ": "fa-solid fa-pills",
+                "Medical Laboratory Technician - میڈیکل لیب ٹیکنیشن": "fa-solid fa-vial",
+                "Physiotherapist - فزیوتھراپسٹ": "fa-solid fa-hand-holding-medical",
+                "Dentist - دندان ساز": "fa-solid fa-tooth",
+                "Radiologist - ریڈیولوجسٹ": "fa-solid fa-x-ray",
+                "Medical Transcriptionist - میڈیکل ٹرانسکرپشنسٹ": "fa-solid fa-keyboard",
+                "Pathologist - پیتھالوجسٹ": "fa-solid fa-microscope",
+                "Healthcare Administrator - صحت کی دیکھ بھال کے ایڈمنسٹریٹر": "fa-solid fa-hospital-user"
+            }
+        },
+        "Engineering and Technology (انجینئرنگ اور ٹیکنالوجی)": {
+            "icon": "fa-solid fa-cogs",
+            "professions": {
+                "Software Engineer/Developer - سافٹ ویئر انجینئر/ڈویلپر": "fa-solid fa-code",
+                "Civil Engineer - سول انجینئر": "fa-solid fa-building",
+                "Mechanical Engineer - مکینیکل انجینئر": "fa-solid fa-tools",
+                "Electrical Engineer - الیکٹریکل انجینئر": "fa-solid fa-bolt",
+                "Electronics and Communication Engineer - الیکٹرانکس اور مواصلاتی انجینئر": "fa-solid fa-microchip",
+                "Data Scientist - ڈیٹا سائنسدان": "fa-solid fa-database",
+                "AI/ML Engineer - اے آئی/ایم ایل انجینئر": "fa-solid fa-robot",
+                "Network Engineer - نیٹ ورک انجینئر": "fa-solid fa-network-wired",
+                "Systems Administrator - سسٹمز ایڈمنسٹریٹر": "fa-solid fa-server",
+                "DevOps Engineer - ڈیو اوپس انجینئر": "fa-solid fa-sync-alt",
+                "Industrial Engineer - صنعتی انجینئر": "fa-solid fa-industry"
+            }
+        },
+        "Education (تعلیم)": {
+            "icon": "fa-solid fa-graduation-cap",
+            "professions": {
+                "Teacher (Primary, Secondary, Higher Education) - استاد (پرائمری، سیکنڈری، اعلیٰ تعلیم)": "fa-solid fa-chalkboard-teacher",
+                "Professor/Lecturer - پروفیسر/لیکچرر": "fa-solid fa-user-graduate",
+                "School Administrator/Principal - اسکول ایڈمنسٹریٹر/پرنسپل": "fa-solid fa-school",
+                "Private Tutor - نجی ٹیچر": "fa-solid fa-user-edit",
+                "Educational Counselor - تعلیمی مشیر": "fa-solid fa-user-tie",
+                "Educational Content Developer - تعلیمی مواد تیار کرنے والا": "fa-solid fa-book",
+                "Research Scholar - تحقیقی عالم": "fa-solid fa-flask",
+                "Librarian - لائبریرین": "fa-solid fa-book-open",
+                "Urdu Language Teacher - اردو زبان کے استاد": "fa-solid fa-language",
+                "Arabic Language Teacher - عربی زبان کے استاد": "fa-solid fa-language",
+                "Foreign Language Teacher - غیر ملکی زبان کے استاد": "fa-solid fa-language"
+            }
+        },
+        "Business and Finance (کاروبار اور مالیات)": {
+            "icon": "fa-solid fa-briefcase",
+            "professions": {
+                "Accountant - اکاؤنٹنٹ": "fa-solid fa-calculator",
+                "Chartered Accountant (CA) - چارٹرڈ اکاؤنٹنٹ (سی اے)": "fa-solid fa-chart-line",
+                "Financial Analyst - مالیاتی تجزیہ کار": "fa-solid fa-chart-pie",
+                "Investment Banker - سرمایہ کاری بینکر": "fa-solid fa-university",
+                "Business Consultant - کاروباری مشیر": "fa-solid fa-comments-dollar",
+                "Human Resource Manager - انسانی وسائل کے مینیجر": "fa-solid fa-users-cog",
+                "Marketing Manager - مارکیٹنگ مینیجر": "fa-solid fa-bullhorn",
+                "Sales Executive - سیلز ایگزیکٹو": "fa-solid fa-handshake",
+                "Operations Manager - آپریشنز مینیجر": "fa-solid fa-tasks",
+                "Tax Consultant - ٹیکس کنسلٹنٹ": "fa-solid fa-file-invoice-dollar"
+            }
+        },
+        "Government and Public Services (سرکاری اور عوامی خدمات)": {
+            "icon": "fa-solid fa-landmark",
+            "professions": {
+                "IAS/IPS/IFS Officer - آئی اے ایس/آئی پی ایس/آئی ایف ایس افسر": "fa-solid fa-user-shield",
+                "Government Clerk - سرکاری کلرک": "fa-solid fa-file-alt",
+                "Railway Officer - ریلوے افسر": "fa-solid fa-train",
+                "Public Sector Undertaking (PSU) Employee - پبلک سیکٹر انڈرٹیکنگ (پی ایس یو) ملازم": "fa-solid fa-industry",
+                "Defense Officer (Army, Navy, Air Force) - دفاعی افسر (آرمی، نیوی، ایئر فورس)": "fa-solid fa-shield-alt",
+                "Police Officer - پولیس افسر": "fa-solid fa-user-shield",
+                "Municipal Officer - میونسپل افسر": "fa-solid fa-city"
+            }
+        },
+        "Legal Profession (قانونی پیشہ)": {
+            "icon": "fa-solid fa-balance-scale",
+            "professions": {
+                "Lawyer/Advocate - وکیل/ایڈووکیٹ": "fa-solid fa-gavel",
+                "Legal Consultant - قانونی مشیر": "fa-solid fa-handshake",
+                "Judge - جج": "fa-solid fa-balance-scale",
+                "Notary - نوٹری": "fa-solid fa-stamp",
+                "Public Prosecutor - سرکاری وکیل": "fa-solid fa-gavel",
+                "Legal Advisor - قانونی مشیر": "fa-solid fa-user-tie"
+            }
+        },
+        "Creative Arts and Media (تخلیقی فنون اور میڈیا)": {
+            "icon": "fa-solid fa-palette",
+            "professions": {
+                "Graphic Designer - گرافک ڈیزائنر": "fa-solid fa-pencil-ruler",
+                "Content Writer/Copywriter - مواد لکھنے والا/کاپی رائٹر": "fa-solid fa-pen-nib",
+                "Journalist/Reporter - صحافی/رپورٹر": "fa-solid fa-newspaper",
+                "Photographer - فوٹوگرافر": "fa-solid fa-camera",
+                "Videographer - ویڈیو گرافر": "fa-solid fa-video",
+                "Animator - انیمیٹر": "fa-solid fa-film",
+                "Painter - مصور": "fa-solid fa-paint-brush",
+                "Scriptwriter - اسکرپٹ رائٹر": "fa-solid fa-scroll"
+            }
+        },
+        "Hospitality and Tourism (مہمان نوازی اور سیاحت)": {
+            "icon": "fa-solid fa-concierge-bell",
+            "professions": {
+                "Hotel Manager - ہوٹل مینیجر": "fa-solid fa-hotel",
+                "Chef - شیف": "fa-solid fa-utensils",
+                "Travel Agent - ٹریول ایجنٹ": "fa-solid fa-plane",
+                "Tour Guide - ٹور گائیڈ": "fa-solid fa-map-signs",
+                "Event Planner - ایونٹ پلانر": "fa-solid fa-calendar-check",
+                "Front Desk Executive - فرنٹ ڈیسک ایگزیکٹو": "fa-solid fa-concierge-bell",
+                "Housekeeping Staff - ہاؤس کیپنگ عملہ": "fa-solid fa-broom",
+                "Restaurant Manager - ریستوراں مینیجر": "fa-solid fa-wine-glass-alt"
+            }
+        },
+        "Agriculture and Allied Services (زراعت اور متعلقہ خدمات)": {
+            "icon": "fa-solid fa-tractor",
+            "professions": {
+                "Farmer - کسان": "fa-solid fa-seedling",
+                "Horticulturist - باغبان": "fa-solid fa-leaf",
+                "Agricultural Scientist - زرعی سائنسدان": "fa-solid fa-flask",
+                "Dairy Farmer - ڈیری کسان": "fa-solid fa-cheese",
+                "Fisheries Specialist - فشریز ماہر": "fa-solid fa-fish",
+                "Agricultural Equipment Operator - زرعی آلات آپریٹر": "fa-solid fa-tractor"
+            }
+        },
+        "Trades and Technical Services (تجارت اور تکنیکی خدمات)": {
+            "icon": "fa-solid fa-hammer",
+            "professions": {
+                "Electrician - الیکٹریشن": "fa-solid fa-bolt",
+                "Plumber - پلمبر": "fa-solid fa-wrench",
+                "Carpenter - بڑھئی": "fa-solid fa-hammer",
+                "Mechanic (Automobile, Machine Repair) - میکینک (آٹوموبائل، مشین مرمت)": "fa-solid fa-tools",
+                "Welder - ویلڈر": "fa-solid fa-fire",
+                "Construction Worker - تعمیراتی کارکن": "fa-solid fa-hard-hat",
+                "HVAC Technician - ایچ وی اے سی ٹیکنیشن": "fa-solid fa-fan"
+            }
+        },
+        "Retail and E-commerce (خوردہ اور ای کامرس)": {
+            "icon": "fa-solid fa-shopping-cart",
+            "professions": {
+                "Retail Store Manager - خوردہ اسٹور مینیجر": "fa-solid fa-store",
+                "Sales Executive - سیلز ایگزیکٹو": "fa-solid fa-tag",
+                "Inventory Manager - انوینٹری مینیجر": "fa-solid fa-boxes",
+                "E-commerce Specialist - ای کامرس ماہر": "fa-solid fa-shopping-bag",
+                "Customer Service Representative - کسٹمر سروس کے نمائندہ": "fa-solid fa-headset"
+            }
+        },
+        "Arts and Design (فن اور ڈیزائن)": {
+            "icon": "fa-solid fa-palette",
+            "professions": {
+                "Fashion Designer/Tailoring - فیشن ڈیزائنر/درزی": "fa-solid fa-tshirt",
+                "Interior Designer - انٹیریئر ڈیزائنر": "fa-solid fa-couch",
+                "Architect - معمار": "fa-solid fa-drafting-compass",
+                "Beautician - بیوٹیشن": "fa-solid fa-magic",
+                "Mehndi Artist - مہندی آرٹسٹ": "fa-solid fa-hand-paper",
+                "Fine Artist - عمدہ آرٹسٹ": "fa-solid fa-paint-brush",
+                "Jewelry Designer - جیولری ڈیزائنر": "fa-solid fa-gem"
+            }
+        },
+        "Banking and Insurance (بینکاری اور انشورنس)": {
+            "icon": "fa-solid fa-piggy-bank",
+            "professions": {
+                "Bank Clerk - بینک کلرک": "fa-solid fa-receipt",
+                "Bank Manager - بینک مینیجر": "fa-solid fa-university",
+                "Loan Officer - قرض افسر": "fa-solid fa-hand-holding-usd",
+                "Insurance Agent - انشورنس ایجنٹ": "fa-solid fa-user-shield",
+                "Actuary - ایکچوری": "fa-solid fa-calculator"
+            }
+        },
+        "Information Technology (آئی ٹی)": {
+            "icon": "fa-solid fa-desktop",
+            "professions": {
+                "IT Consultant - آئی ٹی کنسلٹنٹ": "fa-solid fa-laptop-code",
+                "Cybersecurity Analyst - سائبرسیکیورٹی تجزیہ کار": "fa-solid fa-user-secret",
+                "Software Tester - سافٹ ویئر ٹیسٹر": "fa-solid fa-vial",
+                "Web Developer - ویب ڈویلپر": "fa-solid fa-code",
+                "Mobile App Developer - موبائل ایپ ڈویلپر": "fa-solid fa-mobile-alt",
+                "UI/UX Designer - یو آئی/یو ایکس ڈیزائنر": "fa-solid fa-palette",
+                "Database Administrator - ڈیٹا بیس ایڈمنسٹریٹر": "fa-solid fa-database",
+                "Cloud Architect - کلاؤڈ آرکیٹیکٹ": "fa-solid fa-cloud",
+                "DevOps Engineer - ڈی اوپس انجینئر": "fa-solid fa-sync-alt"
+            }
+        },
+        "Transportation and Logistics (نقل و حمل اور لاجسٹکس)": {
+            "icon": "fa-solid fa-shipping-fast",
+            "professions": {
+                "Pilot - پائلٹ": "fa-solid fa-plane",
+                "Train Driver - ٹرین ڈرائیور": "fa-solid fa-subway",
+                "Truck Driver - ٹرک ڈرائیور": "fa-solid fa-truck",
+                "Car Driver - کار ڈرائیور": "fa-solid fa-car",
+                "Auto Driver - آٹو ڈرائیور": "fa-solid fa-motorcycle",
+                "Logistician - لاجسٹکس ماہر": "fa-solid fa-boxes",
+                "Supply Chain Manager - سپلائی چین مینیجر": "fa-solid fa-dolly-flatbed",
+                "Delivery Driver - ڈیلیوری ڈرائیور": "fa-solid fa-shipping-fast",
+                "Bus Driver - بس ڈرائیور": "fa-solid fa-bus",
+                "Taxi Driver - ٹیکسی ڈرائیور": "fa-solid fa-taxi"
+            }
+        },
+        "Social Services (سماجی خدمات)": {
+            "icon": "fa-solid fa-hands-helping",
+            "professions": {
+                "Social Worker - سماجی کارکن": "fa-solid fa-handshake",
+                "NGO Manager - این جی او مینیجر": "fa-solid fa-users",
+                "Child Welfare Officer - بچوں کی فلاح و بہبود کا افسر": "fa-solid fa-child",
+                "Community Health Worker - کمیونٹی ہیلتھ ورکر": "fa-solid fa-people-arrows",
+                "Counselor - مشیر": "fa-solid fa-comments",
+                "Probation Officer - پروبیشن آفیسر": "fa-solid fa-gavel"
+            }
+        },
+        "Real Estate (رئیل اسٹیٹ)": {
+            "icon": "fa-solid fa-building",
+            "professions": {
+                "Real Estate Agent - رئیل اسٹیٹ ایجنٹ": "fa-solid fa-home",
+                "Property Developer - پراپرٹی ڈویلپر": "fa-solid fa-city",
+                "Surveyor - سروئیر": "fa-solid fa-ruler-combined",
+                "Property Manager - پراپرٹی مینیجر": "fa-solid fa-building",
+                "Real Estate Broker - رئیل اسٹیٹ بروکر": "fa-solid fa-handshake",
+                "Appraiser - قیمت جاننے والا": "fa-solid fa-euro-sign"
+            }
+        },
+        "Science and Research (سائنس اور تحقیق)": {
+            "icon": "fa-solid fa-atom",
+            "professions": {
+                "Research Scientist - تحقیقی سائنسدان": "fa-solid fa-flask",
+                "Biotechnologist - بایوٹیکنالوجسٹ": "fa-solid fa-dna",
+                "Chemist - کیمسٹ": "fa-solid fa-vial",
+                "Physicist - طبیعیات دان": "fa-solid fa-atom",
+                "Environmental Scientist - ماحولیاتی سائنسدان": "fa-solid fa-leaf",
+                "Astronomer - فلکیات دان": "fa-solid fa-star",
+                "Geologist - جیولوجسٹ": "fa-solid fa-mountain",
+                "Marine Biologist - میرین بایولوجسٹ": "fa-solid fa-water",
+                "Mathematician - ریاضی دان": "fa-solid fa-square-root-alt"
+            }
+        },
+        "Sports and Recreation (کھیل اور تفریح)": {
+            "icon": "fa-solid fa-football-ball",
+            "professions": {
+                "Professional Athlete - پیشہ ور کھلاڑی": "fa-solid fa-running",
+                "Coach/Trainer - کوچ/ٹرینر": "fa-solid fa-dumbbell",
+                "Physical Education Teacher - جسمانی تعلیم کے استاد": "fa-solid fa-basketball-ball",
+                "Sports Manager - کھیل مینیجر": "fa-solid fa-trophy",
+                "Fitness Instructor - فٹنس انسٹرکٹر": "fa-solid fa-heart-pulse",
+                "Recreation Worker - تفریحی کارکن": "fa-solid fa-tree",
+                "Sports Commentator - کھیل کے تبصرہ نگار": "fa-solid fa-microphone"
+            }
+        },
+        "Security Services (سیکیورٹی خدمات)": {
+            "icon": "fa-solid fa-shield-alt",
+            "professions": {
+                "Security Guard - سیکیورٹی گارڈ": "fa-solid fa-user-shield",
+                "Private Investigator - پرائیویٹ انویسٹیگیٹر": "fa-solid fa-search",
+                "Firefighter - فائرفائٹر": "fa-solid fa-fire-extinguisher",
+                "Bodyguard - باڈیگارڈ": "fa-solid fa-user-secret",
+                "Surveillance Operator - نگرانی آپریٹر": "fa-solid fa-camera",
+                "Security Systems Technician - سیکیورٹی سسٹمز ٹیکنیشن": "fa-solid fa-cctv"
+            }
+        },
+        
     "Business": {
             "icon": "fa-solid fa-briefcase",
             "professions": {} // Empty professions since we handle Business differently
-        }
-};
+        } 
+    };
 
     // Populate categories with icons
     var categorySelect = $('#category');
@@ -483,54 +544,20 @@ $(document).ready(function() {
         categorySelect.append(option);
     });
 
-    // Disable profession dropdown by default
-    $('#profession').prop('disabled', true);
+    // Initialize Select2 for Category
+    $('#category').select2({
+        templateResult: formatOption,
+        templateSelection: formatOption,
+        minimumResultsForSearch: Infinity, // Hide the search box
+        width: '100%' // Ensure the select2 dropdown fits the container
+    });
 
-    // Update professions when category changes
-    $('#category').on('change', function() {
-        var category = $(this).val();
-        var professionSelect = $('#profession');
-        professionSelect.empty();
-        professionSelect.append($('<option></option>').attr('value', '').text('Select Profession / پیشہ منتخب کریں'));
-
-        if (category === 'Business') {
-            // Hide the profession select and show business fields
-            $('.select-container:has(#profession)').hide();
-            $('#businessFields').slideDown();
-
-            // Disable profession select
-            $('#profession').prop('disabled', true);
-        } else if (category !== '') {
-            // Show the profession select and hide business fields
-            $('.select-container:has(#profession)').show();
-            $('#businessFields').slideUp();
-
-            // Enable profession select
-            $('#profession').prop('disabled', false);
-
-            // Populate professions based on selected category
-            var professions = data[category]?.professions || {};
-            $.each(professions, function(professionKey, iconClass) {
-                var option = $('<option></option>')
-                    .attr('value', professionKey)
-                    .attr('data-icon', iconClass)
-                    .text(professionKey);
-                professionSelect.append(option);
-            });
-        } else {
-            // If no category is selected, hide profession select and business fields
-            $('.select-container:has(#profession)').show();
-            $('#profession').prop('disabled', true);
-            $('#businessFields').slideUp();
-        }
-
-        // Initialize or refresh Select2
-        $('#profession').select2({
-            templateResult: formatOption,
-            templateSelection: formatOption,
-            minimumResultsForSearch: Infinity,
-            width: '100%'
-        });
+    // Initialize Select2 for Profession
+    $('#profession').select2({
+        templateResult: formatOption,
+        templateSelection: formatOption,
+        minimumResultsForSearch: Infinity, // Hide the search box
+        width: '100%' // Ensure the select2 dropdown fits the container
     });
 
     // Function to format the options with icons
@@ -546,12 +573,84 @@ $(document).ready(function() {
         }
     }
 
-    // Initialize Select2 after the library is loaded
-    $('#category, #profession').select2({
-        templateResult: formatOption,
-        templateSelection: formatOption,
-        minimumResultsForSearch: Infinity, // Hide the search box
-        width: '100%' // Ensure the select2 dropdown fits the container
+    // Disable profession dropdown by default
+    $('#profession').prop('disabled', true);
+
+    // Update professions when category changes
+    $('#category').on('change', function() {
+        var category = $(this).val();
+        var professionSelect = $('#profession');
+        var businessFields = $('#businessFields');
+        var otherCategoryContainer = $('#otherCategoryContainer');
+
+        // Reset Profession select and hide Other Profession input
+        professionSelect.empty();
+        professionSelect.append($('<option></option>').attr('value', '').text('Select Profession / پیشہ منتخب کریں'));
+        $('#otherProfessionContainer').hide();
+        $('#otherProfession').val('');
+
+        if (category === 'Other (دیگر)') {
+            // Show Other Category input and hide profession select and business fields
+            otherCategoryContainer.show();
+            professionSelect.prop('disabled', true);
+            professionSelect.parent().hide();
+            businessFields.slideUp();
+        } else if (category === 'Business') {
+            // Hide the profession select and show business fields
+            otherCategoryContainer.hide();
+            professionSelect.prop('disabled', true);
+            professionSelect.parent().hide();
+            businessFields.slideDown();
+        } else if (category !== '') {
+            // Show the profession select and hide business fields
+            otherCategoryContainer.hide();
+            professionSelect.prop('disabled', false);
+            professionSelect.parent().show();
+            businessFields.slideUp();
+
+            // Populate professions based on selected category
+            var professions = data[category]?.professions || {};
+
+            $.each(professions, function(professionKey, iconClass) {
+                var option = $('<option></option>')
+                    .attr('value', professionKey)
+                    .attr('data-icon', iconClass)
+                    .text(professionKey);
+                professionSelect.append(option);
+            });
+
+            // Add 'Other Profession' option
+            var otherOption = $('<option></option>')
+                .attr('value', 'Other')
+                .attr('data-icon', 'fa-solid fa-question-circle')
+                .text('Other / دیگر');
+            professionSelect.append(otherOption);
+
+            // Refresh Select2
+            professionSelect.trigger('change');
+        } else {
+            // If no category is selected, hide profession select and business fields
+            otherCategoryContainer.hide();
+            professionSelect.prop('disabled', true);
+            professionSelect.parent().show();
+            businessFields.slideUp();
+        }
+
+        // Refresh Select2 for Category
+        $('#category').select2();
+    });
+
+    // Update 'Other Profession' input when profession changes
+    $('#profession').on('change', function() {
+        var profession = $(this).val();
+        var otherProfessionContainer = $('#otherProfessionContainer');
+
+        if (profession === 'Other') {
+            otherProfessionContainer.show();
+        } else {
+            otherProfessionContainer.hide();
+            $('#otherProfession').val('');
+        }
     });
 
     // Handle form submission
@@ -576,7 +675,21 @@ $(document).ready(function() {
         var email = $('#email').val() || 'N/A';
         var address = $('#address').val();
         var category = $('#category option:selected').text();
-        var profession = $('#profession option:selected').text() || 'N/A';
+        var categoryValue = $('#category').val();
+
+        // Determine if 'Other Category' is selected
+        if (categoryValue === 'Other (دیگر)') {
+            var otherCategory = $('#otherCategory').val().trim();
+            if (otherCategory === '') {
+                alert('Please specify your category.');
+                $('#otherCategory').focus();
+                return false;
+            }
+            category = otherCategory;
+        }
+
+        var profession = 'N/A';
+        var professionValue = $('#profession').val();
 
         // Initialize message
         var message = '*Name / نام*: ' + fullName + '\n' +
@@ -585,8 +698,8 @@ $(document).ready(function() {
                       '*Address / پتہ*: ' + address + '\n' +
                       '*Category / زمرہ*: ' + category;
 
-        // Append profession or business information
-        if ($('#category').val() === 'Business') {
+        if (categoryValue === 'Business') {
+            // Collect business information
             var businessName = $('#businessName').val() || 'N/A';
             var businessType = $('#businessType').val() || 'N/A';
             var businessSize = $('#businessSize').val() || 'N/A';
@@ -609,10 +722,22 @@ $(document).ready(function() {
                        '\n*Website / ویب سائٹ*: ' + website;
         } else {
             // Validate profession
-            if ($('#profession').val() === '') {
+            if (professionValue === '') {
                 alert('Please select a profession before submitting the form.');
                 $('#profession').focus();
                 return false;
+            }
+
+            if (professionValue === 'Other') {
+                var otherProfession = $('#otherProfession').val().trim();
+                if (otherProfession === '') {
+                    alert('Please specify your profession.');
+                    $('#otherProfession').focus();
+                    return false;
+                }
+                profession = otherProfession;
+            } else {
+                profession = $('#profession option:selected').text();
             }
 
             message += '\n*Profession / پیشہ*: ' + profession;
@@ -621,8 +746,8 @@ $(document).ready(function() {
         // Encode the message
         var encodedMessage = encodeURIComponent(message);
 
-        // WhatsApp number
-        var whatsappNumber = '+919650068218';
+        // WhatsApp number (ensure it's in international format without '+')
+        var whatsappNumber = '919650068218'; // Changed from '+919650068218' to '919650068218'
 
         // Construct WhatsApp URL
         var whatsappURL = 'https://wa.me/' + whatsappNumber + '?text=' + encodedMessage;
