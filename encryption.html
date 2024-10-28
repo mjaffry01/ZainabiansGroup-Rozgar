@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Professionals Data</title>
+    <!-- Include JSON5 Library -->
+    <script src="https://unpkg.com/json5@2.2.3/dist/index.min.js"></script>
+    <!-- Include CryptoJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f3;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            resize: vertical;
+        }
+        textarea {
+            height: 250px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 14px 25px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .output {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+        .hidden {
+            display: none;
+        }
+        .alert {
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+            color: white;
+        }
+        .alert-success {
+            background-color: #28a745;
+        }
+        .alert-error {
+            background-color: #dc3545;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 90%;
+        }
+        .entry-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+        .entry-container h4 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Update Professionals Data</h2>
+        
+        <!-- Section to Select Existing data.js File -->
+        <div class="section">
+            <label for="dataFile">Select Existing <code>data.js</code> File:</label>
+            <input type="file" id="dataFile" accept=".js">
+        </div>
+        
+        <!-- Section to Paste New Professional Details -->
+        <div class="section">
+            <label for="newEntries">Paste New Professional Details:</label>
+            <textarea id="newEntries" placeholder="Paste multiple entries here, separated by a blank line..."></textarea>
+            <small>Separate each professional entry with a blank line for proper parsing.</small>
+        </div>
+        
+        <!-- Process Button -->
+        <button id="processBtn">Process and Update Data</button>
+        
+        <!-- Alert Messages -->
+        <div id="alert" class="hidden alert"></div>
+        
+        <!-- Display Parsed New Entries -->
+        <h3>New Professional Entries:</h3>
+        <div id="parsedData">
+            <p>No data processed yet.</p>
+        </div>
+        
+        <!-- Download Button -->
+        <button id="downloadBtn" class="hidden">Download Updated <code>data.js</code></button>
+    </div>
+
+    <script>
+        const ENCRYPTION_KEY = 'YourSecretKey123'; // Replace with a secure key
+
+        let existingProfessionals = [];
+        let newEntries = [];
+
+        // Utility function to display alerts
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alert');
+            alertBox.innerHTML = message;
+            alertBox.className = ''; // Reset classes
+            if (type === 'success') {
+                alertBox.classList.add('alert', 'alert-success');
+            } else if (type === 'error') {
+                alertBox.classList.add('alert', 'alert-error');
+            }
+            alertBox.classList.remove('hidden');
+        }
+
+        // Utility function to hide alerts
+        function hideAlert() {
+            const alertBox = document.getElementById('alert');
+            alertBox.classList.add('hidden');
+            alertBox.innerHTML = '';
+        }
+
+        // Function to encrypt data using AES
+        function encryptData(data) {
+            return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
+        }
+
+        // Function to parse existing data.js file using JSON5
+        function parseDataJs(content) {
+            // Extract the array from "const professionals = [ ... ];"
+            const arrayMatch = content.match(/const\s+professionals\s*=\s*(\[\s*[\s\S]*\s*\]);/);
+            if (!arrayMatch) {
+                throw new Error("Invalid <code>data.js</code> format. Expected 'const professionals = [ ... ];'");
+            }
+            const arrayString = arrayMatch[1];
+            try {
+                // Use JSON5 to parse the array string
+                const professionalsArray = JSON5.parse(arrayString);
+                return professionalsArray;
+            } catch (e) {
+                throw new Error("Failed to parse the professionals array. Ensure it is valid JSON.");
+            }
+        }
+
+        // Function to process a single entry text
+        function processSingleEntry(text, entryNumber) {
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const entry = {};
+            lines.forEach(line => {
+                const [key, ...value] = line.split(':');
+                if (key && value) {
+                    const cleanKey = key.split('/')[0].trim().toLowerCase().replace(/ /g, '_');
+                    entry[cleanKey] = value.join(':').trim();
+                }
+            });
+
+            // Validate required fields
+            const requiredFields = ['name', 'phone_number', 'email_address', 'category', 'profession'];
+            for (let field of requiredFields) {
+                if (!entry[field]) {
+                    throw new Error(`Entry ${entryNumber}: Missing required field: <strong>${field.replace('_', ' ')}</strong>`);
+                }
+            }
+
+            // Determine if the profession is business-related
+            const isBusiness = /business|finance/i.test(entry.category);
+
+            // Map fields to match data.js structure
+            const mappedEntry = {
+                name: entry.name,
+                phone: isBusiness ? entry.phone_number : encryptData(entry.phone_number),
+                email: (entry.email_address !== 'N/A') ? (isBusiness ? entry.email_address : encryptData(entry.email_address)) : '',
+                profession: entry.profession,
+                business: isBusiness,
+                description: entry.description || 'No description provided.'
+            };
+
+            return mappedEntry;
+        }
+
+        // Function to process all entries
+        function processAllEntries(text) {
+            // Split entries by two or more newlines
+            const rawEntries = text.split(/\n\s*\n/).filter(entry => entry.trim() !== '');
+            const processedEntries = [];
+
+            rawEntries.forEach((entryText, index) => {
+                try {
+                    const processedEntry = processSingleEntry(entryText, index + 1);
+                    processedEntries.push(processedEntry);
+                } catch (error) {
+                    // Throw the first encountered error
+                    throw error;
+                }
+            });
+
+            return processedEntries;
+        }
+
+        // Function to display all parsed entries
+        function displayParsedEntries(entries) {
+            const parsedDataDiv = document.getElementById('parsedData');
+            parsedDataDiv.innerHTML = ''; // Clear previous content
+
+            entries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.classList.add('entry-container');
+
+                const entryTitle = document.createElement('h4');
+                entryTitle.textContent = `Entry ${index + 1}`;
+                entryDiv.appendChild(entryTitle);
+
+                const entryContent = document.createElement('pre');
+                entryContent.textContent = JSON.stringify(entry, null, 4);
+                entryDiv.appendChild(entryContent);
+
+                parsedDataDiv.appendChild(entryDiv);
+            });
+        }
+
+        // Event listener for the Process Button
+        document.getElementById('processBtn').addEventListener('click', () => {
+            hideAlert();
+            const dataFileInput = document.getElementById('dataFile');
+            const newEntriesText = document.getElementById('newEntries').value.trim();
+
+            if (dataFileInput.files.length === 0) {
+                showAlert('Please select an existing <code>data.js</code> file.', 'error');
+                return;
+            }
+
+            if (!newEntriesText) {
+                showAlert('Please paste the new professional details.', 'error');
+                return;
+            }
+
+            const dataFile = dataFileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const dataContent = e.target.result;
+                try {
+                    existingProfessionals = parseDataJs(dataContent);
+                } catch (error) {
+                    showAlert(error.message, 'error');
+                    return;
+                }
+
+                // Process all new entries
+                try {
+                    newEntries = processAllEntries(newEntriesText);
+                } catch (error) {
+                    showAlert(error.message, 'error');
+                    return;
+                }
+
+                // Display the parsed new entries
+                displayParsedEntries(newEntries);
+
+                // Show the download button
+                document.getElementById('downloadBtn').classList.remove('hidden');
+                showAlert(`${newEntries.length} entries processed successfully! You can now download the updated <code>data.js</code> file.`, 'success');
+            };
+
+            reader.onerror = function() {
+                showAlert('Failed to read the selected <code>data.js</code> file.', 'error');
+            };
+
+            reader.readAsText(dataFile);
+        });
+
+        // Event listener for the Download Button
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (newEntries.length === 0) {
+                showAlert('No new entries to add.', 'error');
+                return;
+            }
+
+            // Append the new entries to the existing professionals array
+            const updatedProfessionals = [...existingProfessionals, ...newEntries];
+
+            // Create the updated data.js content
+            const updatedDataJs = `const professionals = ${JSON.stringify(updatedProfessionals, null, 4)};`;
+
+            // Create a Blob from the updated data
+            const blob = new Blob([updatedDataJs], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+
+            // Create a temporary link to trigger the download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.js';
+            document.body.appendChild(a);
+            a.click();
+
+            // Clean up
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showAlert('Updated <code>data.js</code> has been downloaded successfully!', 'success');
+
+            // Reset the form
+            document.getElementById('dataFile').value = '';
+            document.getElementById('newEntries').value = '';
+            document.getElementById('parsedData').innerHTML = '<p>No data processed yet.</p>';
+            document.getElementById('downloadBtn').classList.add('hidden');
+            newEntries = [];
+        });
+    </script>
+</body>
+</html>

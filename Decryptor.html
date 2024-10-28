@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Professionals Data</title>
+    <!-- Include JSON5 Library -->
+    <script src="https://unpkg.com/json5@2.2.3/dist/index.min.js"></script>
+    <!-- Include CryptoJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .output {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+        .hidden {
+            display: none;
+        }
+        .alert {
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+            color: white;
+        }
+        .alert-success {
+            background-color: #28a745;
+        }
+        .alert-error {
+            background-color: #dc3545;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 90%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Search Professionals Data</h2>
+        
+        <!-- Section to Select Existing data.js File -->
+        <div class="section">
+            <label for="dataFile">Select Existing <code>data.js</code> File:</label>
+            <input type="file" id="dataFile" accept=".js">
+        </div>
+        
+        <!-- Section to Choose Search Type and Enter Encrypted Value -->
+        <div class="section">
+            <label for="searchType">Search By:</label>
+            <select id="searchType">
+                <option value="phone">Encrypted Phone Number</option>
+                <option value="email">Encrypted Email Address</option>
+            </select>
+        </div>
+        
+        <div class="section">
+            <label for="searchValue">Enter Encrypted Value:</label>
+            <input type="text" id="searchValue" placeholder="Paste the encrypted phone number or email address here...">
+        </div>
+        
+        <!-- Search Button -->
+        <button id="searchBtn">Search</button>
+        
+        <!-- Alert Messages -->
+        <div id="alert" class="hidden alert"></div>
+        
+        <!-- Display Search Results -->
+        <h3>Search Result:</h3>
+        <div class="output" id="searchResult">No search performed yet.</div>
+    </div>
+
+    <script>
+        const ENCRYPTION_KEY = 'YourSecretKey123'; // Replace with your actual encryption key
+
+        let professionals = [];
+
+        // Utility function to display alerts
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alert');
+            alertBox.innerHTML = message;
+            alertBox.className = ''; // Reset classes
+            if (type === 'success') {
+                alertBox.classList.add('alert', 'alert-success');
+            } else if (type === 'error') {
+                alertBox.classList.add('alert', 'alert-error');
+            }
+            alertBox.classList.remove('hidden');
+        }
+
+        // Utility function to hide alerts
+        function hideAlert() {
+            const alertBox = document.getElementById('alert');
+            alertBox.classList.add('hidden');
+            alertBox.innerHTML = '';
+        }
+
+        // Function to parse data.js file using JSON5
+        function parseDataJs(content) {
+            // Extract the array from "const professionals = [ ... ];"
+            const arrayMatch = content.match(/const\s+professionals\s*=\s*(\[\s*[\s\S]*\s*\]);/);
+            if (!arrayMatch) {
+                throw new Error("Invalid <code>data.js</code> format. Expected 'const professionals = [ ... ];'");
+            }
+            const arrayString = arrayMatch[1];
+            try {
+                // Use JSON5 to parse the array string
+                const professionalsArray = JSON5.parse(arrayString);
+                return professionalsArray;
+            } catch (e) {
+                throw new Error("Failed to parse the professionals array. Ensure it is valid JSON.");
+            }
+        }
+
+        // Function to decrypt data using AES
+        function decryptData(cipherText) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, ENCRYPTION_KEY);
+                const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+                return decryptedData;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Event listener for file upload
+        document.getElementById('dataFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                try {
+                    professionals = parseDataJs(content);
+                    showAlert('data.js file loaded successfully!', 'success');
+                } catch (error) {
+                    showAlert(error.message, 'error');
+                    professionals = [];
+                }
+            };
+            reader.onerror = function() {
+                showAlert('Failed to read the selected <code>data.js</code> file.', 'error');
+            };
+            reader.readAsText(file);
+        });
+
+        // Event listener for Search Button
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            hideAlert();
+            const searchType = document.getElementById('searchType').value;
+            const searchValue = document.getElementById('searchValue').value.trim();
+
+            if (professionals.length === 0) {
+                showAlert('Please upload and load a <code>data.js</code> file first.', 'error');
+                return;
+            }
+
+            if (!searchValue) {
+                showAlert('Please enter an encrypted value to search.', 'error');
+                return;
+            }
+
+            // Perform the search
+            let matchedProfessional = null;
+            for (let prof of professionals) {
+                if (searchType === 'phone' && prof.phone === searchValue) {
+                    matchedProfessional = prof;
+                    break;
+                }
+                if (searchType === 'email' && prof.email === searchValue) {
+                    matchedProfessional = prof;
+                    break;
+                }
+            }
+
+            if (!matchedProfessional) {
+                showAlert('No matching professional found for the provided encrypted value.', 'error');
+                document.getElementById('searchResult').textContent = 'No matching professional found.';
+                return;
+            }
+
+            // Decrypt phone and email if profession is non-business
+            let displayPhone = matchedProfessional.phone;
+            let displayEmail = matchedProfessional.email;
+
+            if (!matchedProfessional.business) {
+                if (matchedProfessional.phone) {
+                    const decryptedPhone = decryptData(matchedProfessional.phone);
+                    displayPhone = decryptedPhone ? decryptedPhone : 'Decryption failed.';
+                }
+                if (matchedProfessional.email) {
+                    const decryptedEmail = decryptData(matchedProfessional.email);
+                    displayEmail = decryptedEmail ? decryptedEmail : 'Decryption failed.';
+                }
+            }
+
+            // Prepare the display data
+            const displayData = {
+                Name: matchedProfessional.name,
+                'Phone Number': displayPhone,
+                'Email Address': displayEmail,
+                'Profession': matchedProfessional.profession,
+                'Business': matchedProfessional.business,
+                'Description': matchedProfessional.description
+            };
+
+            // Display the result
+            document.getElementById('searchResult').textContent = JSON.stringify(displayData, null, 4);
+            showAlert('Professional found and information decrypted (if applicable).', 'success');
+        });
+    </script>
+</body>
+</html>

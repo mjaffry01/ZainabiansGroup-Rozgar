@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professionals Messaging</title>
+    <!-- Include CryptoJS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 25px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .output {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+        .hidden {
+            display: none;
+        }
+        .alert {
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+            color: white;
+        }
+        .alert-success {
+            background-color: #28a745;
+        }
+        .alert-error {
+            background-color: #dc3545;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 90%;
+        }
+        .send-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .send-buttons button {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Professionals Messaging</h2>
+        
+        <!-- New Section: Enter Your Message -->
+        <h3>Enter Your Message</h3>
+        <div class="section">
+            <label for="userMessage">Paste Your Message:</label>
+            <textarea id="userMessage" placeholder="As Salamwalakum, my name is Ali. Please book a service call with Ms. / جنابra Ahmed Baig (U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=). The service I need is Private Tutor, and my phone number is 9810976296.">As Salamwalakum, my name is Ali. Please book a service call with Ms. / جنابra Ahmed Baig (U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=). The service I need is Private Tutor, and my phone number is 9810976296.</textarea>
+        </div>
+        
+        <!-- Process Message Button -->
+        <button id="sendMessageBtn">Process and Prepare Message</button>
+        
+        <!-- Alert Messages for Message Processing -->
+        <div id="messageAlert" class="hidden alert"></div>
+        
+        <!-- Display Message Processing Results -->
+        <h3>Message Processing Result:</h3>
+        <div class="output" id="messageResult">No message processed yet.</div>
+        
+        <!-- Send Buttons (WhatsApp & SMS) -->
+        <div class="send-buttons hidden" id="sendButtons">
+            <button id="sendWhatsAppBtn">Send via WhatsApp</button>
+            <button id="sendSmsBtn">Send via SMS</button>
+        </div>
+    </div>
+
+    <script>
+        const ENCRYPTION_KEY = 'YourSecretKey123'; // Your actual encryption key
+
+        // Embedded professionals data
+        const professionals = [
+            {
+                name: "Ms. / جنابra Ahmed Baig",
+                phone: "U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=", // Encrypted phone number
+                email: "", // Add encrypted email if needed
+                profession: "Private Tutor",
+                business: false,
+                description: "Experienced private tutor in various subjects."
+            }
+        ];
+
+        // Utility function to display alerts
+        function showAlert(elementId, message, type) {
+            const alertBox = document.getElementById(elementId);
+            alertBox.innerHTML = message;
+            alertBox.className = ''; // Reset classes
+            if (type === 'success') {
+                alertBox.classList.add('alert', 'alert-success');
+            } else if (type === 'error') {
+                alertBox.classList.add('alert', 'alert-error');
+            }
+            alertBox.classList.remove('hidden');
+        }
+
+        // Utility function to hide alerts
+        function hideAlert(elementId) {
+            const alertBox = document.getElementById(elementId);
+            alertBox.classList.add('hidden');
+            alertBox.innerHTML = '';
+        }
+
+        // Function to decrypt data using AES
+        function decryptData(cipherText) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, ENCRYPTION_KEY);
+                const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+                return decryptedData;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Function to sanitize phone numbers (remove any non-digit characters)
+        function sanitizePhoneNumber(phone) {
+            return phone.replace(/\D/g, '');
+        }
+
+        // Event listener for Process Message Button
+        document.getElementById('sendMessageBtn').addEventListener('click', () => {
+            hideAlert('messageAlert');
+            document.getElementById('sendButtons').classList.add('hidden'); // Hide send buttons initially
+            const userMessage = document.getElementById('userMessage').value.trim();
+
+            if (professionals.length === 0) {
+                showAlert('messageAlert', 'No professionals data available.', 'error');
+                return;
+            }
+
+            if (!userMessage) {
+                showAlert('messageAlert', 'Please enter a message to process.', 'error');
+                return;
+            }
+
+            // Parse the message to extract details
+            const messageRegex = /As Salamwalakum, my name is\s+([^\.]+)\.\s+Please book a service call with\s+([^()]+)\s+\(([^)]+)\)\.\s+The service I need is\s+([^,]+),\s+and my phone number is\s+(\d{10})\./i;
+            const match = userMessage.match(messageRegex);
+
+            if (!match) {
+                showAlert('messageAlert', 'Message format is incorrect. Please ensure it follows the specified format.', 'error');
+                document.getElementById('messageResult').textContent = 'Invalid message format.';
+                return;
+            }
+
+            const requesterName = match[1].trim();
+            const serviceProviderName = match[2].trim();
+            const encryptedServiceProviderPhone = match[3].trim();
+            const serviceRequirement = match[4].trim();
+            const requesterPhone = match[5].trim();
+
+            // Decrypt the service provider's phone number
+            const decryptedServiceProviderPhone = decryptData(encryptedServiceProviderPhone);
+
+            if (!decryptedServiceProviderPhone) {
+                showAlert('messageAlert', 'Failed to decrypt the service provider\'s phone number.', 'error');
+                document.getElementById('messageResult').textContent = 'Decryption failed.';
+                return;
+            }
+
+            // Search for the professional with the encrypted phone number
+            let matchedProfessional = null;
+            for (let prof of professionals) {
+                if (prof.phone === encryptedServiceProviderPhone) { // Search by encrypted phone
+                    matchedProfessional = prof;
+                    break;
+                }
+            }
+
+            if (!matchedProfessional) {
+                showAlert('messageAlert', 'No matching professional found for the provided encrypted phone number.', 'error');
+                document.getElementById('messageResult').textContent = 'No matching professional found.';
+                return;
+            }
+
+            // Prepare the message to send
+            const sendMessage = `As Salamwalakum, my name is ${requesterName}. The service I need is ${serviceRequirement}. My phone number is ${requesterPhone}.`;
+
+            // Display the matched professional's details, including decrypted phone number
+            const displayData = {
+                'Requester Name': requesterName,
+                'Requester Phone Number': requesterPhone,
+                'Service Requirement': serviceRequirement,
+                'Matched Professional Name': matchedProfessional.name,
+                'Matched Professional Encrypted Phone Number': matchedProfessional.phone,
+                'Matched Professional Decrypted Phone Number': decryptedServiceProviderPhone, // **Added Decrypted Phone Number**
+                'Profession': matchedProfessional.profession,
+                'Business': matchedProfessional.business,
+                'Description': matchedProfessional.description
+            };
+
+            document.getElementById('messageResult').textContent = JSON.stringify(displayData, null, 4);
+            showAlert('messageAlert', 'Professional found and message prepared.', 'success');
+
+            // Store the message and matched professional details for sending
+            window.currentSendMessage = {
+                message: sendMessage,
+                serviceProviderPhone: decryptedServiceProviderPhone
+            };
+
+            // Show the send buttons
+            document.getElementById('sendButtons').classList.remove('hidden');
+        });
+
+        // Event listener for Send via WhatsApp
+        document.getElementById('sendWhatsAppBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.serviceProviderPhone)}?text=${encodeURIComponent(window.currentSendMessage.message)}`;
+            window.open(whatsappUrl, '_blank');
+            showAlert('messageAlert', 'WhatsApp message opened in a new tab.', 'success');
+        });
+
+        // Event listener for Send via SMS
+        document.getElementById('sendSmsBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.serviceProviderPhone)}?body=${encodeURIComponent(window.currentSendMessage.message)}`;
+            window.open(smsUrl, '_blank');
+            showAlert('messageAlert', 'SMS message opened in a new tab.', 'success');
+        });
+    </script>
+</body>
+</html>
