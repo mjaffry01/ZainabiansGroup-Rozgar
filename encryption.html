@@ -8,6 +8,7 @@
     <!-- Include CryptoJS Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
+        /* Your existing CSS styles here */
         body {
             font-family: Arial, sans-serif;
             background-color: #eef2f3;
@@ -187,38 +188,88 @@
             }
         }
 
-        // Function to process a single entry text
+        // Updated function to process a single entry text
         function processSingleEntry(text, entryNumber) {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const lines = text.split('\n');
             const entry = {};
-            lines.forEach(line => {
-                const [key, ...value] = line.split(':');
-                if (key && value) {
-                    const cleanKey = key.split('/')[0].trim().toLowerCase().replace(/ /g, '_');
-                    entry[cleanKey] = value.join(':').trim();
+            let currentKey = null;
+            let currentValue = '';
+
+            lines.forEach((line) => {
+                if (line.trim() === '') {
+                    return; // Skip empty lines
+                }
+                const colonIndex = line.indexOf(':');
+                if (colonIndex !== -1) {
+                    // Found a new key-value pair
+                    if (currentKey !== null) {
+                        // Save the previous key-value pair
+                        entry[currentKey] = currentValue.trim();
+                    }
+                    // Start a new key-value pair
+                    const keyPart = line.substring(0, colonIndex);
+                    const valuePart = line.substring(colonIndex + 1);
+                    const cleanKey = keyPart.split('/')[0].trim().toLowerCase().replace(/ /g, '_');
+                    currentKey = cleanKey;
+                    currentValue = valuePart.trim();
+                } else {
+                    // Continuation of the previous value
+                    if (currentKey !== null) {
+                        currentValue += '\n' + line.trim();
+                    }
                 }
             });
 
+            // After looping, save the last key-value pair
+            if (currentKey !== null) {
+                entry[currentKey] = currentValue.trim();
+            }
+
+            // Determine if the entry is a business or professional
+            const isBusiness = entry.hasOwnProperty('business_name');
+
             // Validate required fields
-            const requiredFields = ['name', 'phone_number', 'email_address', 'category', 'profession'];
+            const requiredFields = ['name', 'phone_number', 'email_address', 'category'];
             for (let field of requiredFields) {
                 if (!entry[field]) {
                     throw new Error(`Entry ${entryNumber}: Missing required field: <strong>${field.replace('_', ' ')}</strong>`);
                 }
             }
 
-            // Determine if the profession is business-related
-            const isBusiness = /business|finance/i.test(entry.category);
+            if (isBusiness) {
+                if (!entry['business_name']) {
+                    throw new Error(`Entry ${entryNumber}: Missing required field: <strong>business name</strong>`);
+                }
+            } else {
+                if (!entry['profession']) {
+                    throw new Error(`Entry ${entryNumber}: Missing required field: <strong>profession</strong>`);
+                }
+            }
 
             // Map fields to match data.js structure
             const mappedEntry = {
                 name: entry.name,
                 phone: isBusiness ? entry.phone_number : encryptData(entry.phone_number),
                 email: (entry.email_address !== 'N/A') ? (isBusiness ? entry.email_address : encryptData(entry.email_address)) : '',
-                profession: entry.profession,
                 business: isBusiness,
-                description: entry.description || 'No description provided.'
+                category: entry.category,
+                address: entry.address || '',
+                description: ''
             };
+
+            if (isBusiness) {
+                mappedEntry.business_name = entry.business_name;
+                mappedEntry.business_type = entry.business_type || '';
+                mappedEntry.business_size = entry.business_size || '';
+                mappedEntry.business_description = entry.business_description || entry.description || 'No description provided.';
+                mappedEntry.digital_presence = entry.digital_presence || '';
+                mappedEntry.website = entry.website || '';
+                // Use business_description as the main description
+                mappedEntry.description = mappedEntry.business_description;
+            } else {
+                mappedEntry.profession = entry.profession;
+                mappedEntry.description = entry.description || 'No description provided.';
+            }
 
             return mappedEntry;
         }

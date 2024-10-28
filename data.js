@@ -1,106 +1,217 @@
 const professionals = [
     {
-        "name": "Mrs. Falak Eshain Eshain",
+        "name": "Mrs. / محترمہ Falak Eshain Eshain",
         "phone": "9541712990",
         "email": "mughalfalakeshain1711@gmail.com",
-        "profession": "Business",
         "business": true,
-        "description": "Discover the finest Kashmiri products at Kashmir Stocks Store! We offer premium Kashmiri Mamra Badam, walnuts, high-quality saffron, exquisite handcrafted items, and much more. Experience authentic Kashmir craftsmanship with us."
+        "category": "Business",
+        "address": "Inam nagar kondhwa budruk near vijay sales",
+        "description": "\"Welcome to the kashmir stocks Store! 🌟\nDry fruits kashmiri mamra badaam, walnuts etc\nDiscover the Essence of Kashmir in Every Product 🏞\n🌺 Indulge in the Elegance of Kashmir with our Premium Saffron Products, including the World-Famous Kashmiri Saffron Threads and Exquisite Saffron Face Scrub and Face Wash etc. 🌼\n🌰 Experience the Nutrient-rich Goodness of Kashmir with Walnut Oil, Badaam (Almond) Oil, and Apricot Oil - Nourishing Your Skin and Health. 🍃\n🎨 Immerse Yourself in the Artistry of Kashmiri Culture with Handcrafted Treasures - From Ponchos to Keychains, Each Piece a Testament to Kashmir's Rich Heritage. 🎁\nAnd, don't miss out on the precious treasure of Ladakh - Sheelajeet, known for its potent health benefits and rareness. We bring you the finest quality from the heights of the Himalayas.\nShop with us , and Bring a Piece of Paradise to Your Doorstep. 🏔\nWe also deal with kashmiri hand Emodery dress material, semi stich, ready made kaftan, tops, sarees, handbags and much more\nFeel free to customize your order as per requirements.",
+        "business_name": "Kashmir stocks",
+        "business_type": "Retail",
+        "business_size": "Small (1-10 employees)",
+        "business_description": "\"Welcome to the kashmir stocks Store! 🌟\nDry fruits kashmiri mamra badaam, walnuts etc\nDiscover the Essence of Kashmir in Every Product 🏞\n🌺 Indulge in the Elegance of Kashmir with our Premium Saffron Products, including the World-Famous Kashmiri Saffron Threads and Exquisite Saffron Face Scrub and Face Wash etc. 🌼\n🌰 Experience the Nutrient-rich Goodness of Kashmir with Walnut Oil, Badaam (Almond) Oil, and Apricot Oil - Nourishing Your Skin and Health. 🍃\n🎨 Immerse Yourself in the Artistry of Kashmiri Culture with Handcrafted Treasures - From Ponchos to Keychains, Each Piece a Testament to Kashmir's Rich Heritage. 🎁\nAnd, don't miss out on the precious treasure of Ladakh - Sheelajeet, known for its potent health benefits and rareness. We bring you the finest quality from the heights of the Himalayas.\nShop with us , and Bring a Piece of Paradise to Your Doorstep. 🏔\nWe also deal with kashmiri hand Emodery dress material, semi stich, ready made kaftan, tops, sarees, handbags and much more\nFeel free to customize your order as per requirements.",
+        "digital_presence": "Social Media",
+        "website": "N/A"
     },
     {
-        "name": "Ms. Raisa Ahmed Baig",
-        "phone": "8208441383",
-        "email": "raisabaig94@gmail.com",
-        "profession": "Private Tutor",
+        "name": "Ms. / محترمہ Raisa Ahmed Baig",
+        "phone": "U2FsdGVkX186QflCOL1Qdc4y/b5UtD2krUzdhRqGhgg=",
+        "email": "U2FsdGVkX18uv3wYx2BbuDQ6IvZMkRuFrbyJr9gpBXduMeQhQv3Uzwq2qN/iIY2D",
         "business": false,
-        "description": "Unlock your child’s potential with expert private tutoring. Specializing in primary and secondary education, Ms. Raisa Ahmed Baig provides personalized learning plans to ensure academic excellence and confidence."
+        "category": "Education (تعلیم)",
+        "address": "Tohid cottage\n4/401,near nawazish park, near Umar masjid next to junaida masjid mithai Nagar kondwa khurd Pune 48",
+        "description": "No description provided.",
+        "profession": "Private Tutor -"
     },
     {
-        "name": "Mr. Sarwar Habib Sayyed",
-        "phone": "9326282920",
-        "email": "sparkez13@gmail.com",
-        "profession": "Professor/Lecturer",
+        "name": "Mr. / جناب Sarwar Habib Sayyed",
+        "phone": "U2FsdGVkX18dkUhCcmgEaZbdXTBAiV89BrBD2mMp7dY=",
+        "email": "U2FsdGVkX1/pqy1p1JKyipSy31FdUwoJNxzz43mVjNANfQgdjGRLKkU1Lyfe5BY0",
         "business": false,
-        "description": "Enhance your academic journey with Mr. Sarwar Habib Sayyed, a seasoned lecturer specializing in higher education. Benefit from his extensive knowledge and passion for teaching at the university level."
+        "category": "Education (تعلیم)",
+        "address": "Sv No 5,Galli No 1\nMannat-e-fatima\nFlat # 402\nAshraf Nagar\nNear Alif Tower\nKondhwa Khurd\nPune 411048",
+        "description": "No description provided.",
+        "profession": "Professor/Lecturer -"
     },
     {
-        "name": "Mr. Moulana Syed Haider Ali Abedi Ali Husain",
-        "phone": "9823508926",
-        "email": "N/A",
-        "profession": "Private Tutor",
+        "name": "Mr. / جناب Moulana Syed Haider Ali abedi Ali Husain",
+        "phone": "U2FsdGVkX1+65ldMLmcKY2CAW55cEnB5J4U/usjOJrQ=",
+        "email": "",
         "business": false,
-        "description": "Deepen your understanding of religious studies with Mr. Moulana Syed Haider Ali Abedi Ali Husain. Offering dedicated private tutoring to foster spiritual and educational growth."
+        "category": "Education (تعلیم)",
+        "address": "Unity palace 7/18 Sagar kamthe Nagar kondwa pune",
+        "description": "No description provided.",
+        "profession": "Private Tutor -"
     },
     {
-        "name": "Mr. Taslim Raza Baqar Raza Sayyed",
-        "phone": "9730324054",
-        "email": "ca.trsayyed@gmail.com",
-        "profession": "Chartered Accountant (CA)",
+        "name": "Mr. / جناب Taslim Raza Baqar Raza Sayyed",
+        "phone": "U2FsdGVkX1/5vrgumZtDs45/koqYRFpagUtTI0MKbYM=",
+        "email": "U2FsdGVkX1/bHOJ7gD36zoZrRLRYkiarqZ6KgSij5B/3RZiYASRFXDREPFzAOV0I",
         "business": false,
-        "description": "Optimize your financial health with Mr. Taslim Raza Baqar Raza Sayyed, a Chartered Accountant offering comprehensive financial services and strategic business consulting tailored to your needs."
+        "category": "Business and Finance (کاروبار اور مالیات)",
+        "address": "C402, Nancy Garden Borade Nagar, Wanowrie Pune 411040",
+        "description": "No description provided.",
+        "profession": "Chartered Accountant (CA) -"
     },
     {
-        "name": "Ms. Zarreen Fatima Rizvi",
-        "phone": "9119941082",
-        "email": "rabikarizvirizvi1266@gmail.com",
-        "profession": "Teacher (Primary, Secondary, Higher Education)",
+        "name": "Ms. / محترمہ Zarreen Fatima Rizvi",
+        "phone": "U2FsdGVkX1+/EjmFBpV2Ty2nsTPRmmy7ftJkNm893Mw=",
+        "email": "U2FsdGVkX1/465AXai0G05xsdi3V1mWLUCfzPo6uSm/gTKwD4gBmLAJkc4E6wwbJ",
         "business": false,
-        "description": "Inspire learning with Ms. Zarreen Fatima Rizvi, an experienced educator across primary, secondary, and higher education. Dedicated to fostering academic success and a love for learning in every student."
+        "category": "Education (تعلیم)",
+        "address": "Azamgarh",
+        "description": "No description provided.",
+        "profession": "Teacher (Primary, Secondary, Higher Education) - استاد (پرائمری،"
     },
     {
-        "name": "Dr. Sabah Vazirali Kalinawala",
-        "phone": "8655272110",
-        "email": "sabrinavaz110@gmail.com",
-        "profession": "Dentist",
+        "name": "Mr. / جناب Moulana Syed Haider Ali abedi Ali Husain",
+        "phone": "U2FsdGVkX1+JmldZb+9x1iPsgdhSv2s4JA0Jf3+KRCw=",
+        "email": "",
         "business": false,
-        "description": "Achieve a healthy and radiant smile with Dr. Sabah Vazirali Kalinawala. Specializing in both general and cosmetic dentistry, offering comprehensive dental care tailored to your needs."
+        "category": "Education (تعلیم)",
+        "address": "Unity palace 7/18 Sagar kamthe Nagar kondwa pune",
+        "description": "No description provided.",
+        "profession": "Private Tutor -"
     },
     {
-        "name": "Mrs. Muskan Anwar Jiwani",
-        "phone": "9921900219",
-        "email": "muskanjmirza@gmail.com",
-        "profession": "Educational Content Developer",
+        "name": "Ms. / محترمہ Zarreen Fatima Rizvi",
+        "phone": "U2FsdGVkX1+U8+gqUlZ7SUcikhvoEQg+JNDkrk5VG3Y=",
+        "email": "U2FsdGVkX1+uF+5mCAKQ5DDXpRp8b7Ktm64SNHVMO1hzzH6SxW99SvBbRO5tQ12o",
         "business": false,
-        "description": "Transform your educational programs with Mrs. Muskan Anwar Jiwani. Expert in developing engaging curricula and high-quality content for institutions and e-learning platforms."
+        "category": "Education (تعلیم)",
+        "address": "Azamgarh",
+        "description": "No description provided.",
+        "profession": "Teacher (Primary, Secondary, Higher Education) - استاد (پرائمری،"
     },
     {
-        "name": "Ms. Ridazehra Sabir Shamji",
-        "phone": "9130520155",
-        "email": "rida2shamji@gmail.com",
-        "profession": "Pharmacist",
+        "name": "Mrs. / محترمہ Mubashshira Mohammad Abbas Shaikh",
+        "phone": "U2FsdGVkX19/89f/Mn5Hc1oGsSRvyLYI/skYnATyerE=",
+        "email": "U2FsdGVkX19bzfpDc7mh+nHjX7TkWZ4YSu9iP2ZApwQrz+Vd2DC0P3BSsCOfJxv+",
         "business": false,
-        "description": "Ensure your health and well-being with Ms. Ridazehra Sabir Shamji, a dedicated pharmacist providing expert medication dispensing and personalized healthcare advice."
+        "category": "Arts and Design (فن اور ڈیزائن)",
+        "address": "Kondhwa Pune",
+        "description": "No description provided.",
+        "profession": "Fashion Designer/Tailoring -"
     },
     {
-        "name": "Mrs. Mubashshira Mohammad Abbas Shaikh",
-        "phone": "9209226136",
-        "email": "mamshaikh2075@gmail.com",
-        "profession": "Fashion Designer/Tailoring",
+        "name": "Dr. / ڈاکٹر Sabah Vazirali Kalinawala",
+        "phone": "U2FsdGVkX1/MoH8s0GdC4k+7EfE59qMBxhMsoiDmWoo=",
+        "email": "U2FsdGVkX1/nqzaID4h2EAtAvQ8+3qptM1D/2a07+GqeAvO9MR4TasJeEcgAcsBV",
         "business": false,
-        "description": "Elevate your style with Mrs. Mubashshira Mohammad Abbas Shaikh. Specializing in bespoke tailoring and custom-made clothing, delivering unique and fashionable designs tailored to your preferences."
+        "category": "Medical and Healthcare (طبی اور صحت کی دیکھ بھال)",
+        "address": "India",
+        "description": "No description provided.",
+        "profession": "Dentist -"
     },
     {
-        "name": "Mrs. Pakeeza Rabab Sarwar Sayyed",
+        "name": "Mrs. / محترمہ Muskan Anwar Jiwani",
+        "phone": "U2FsdGVkX1/nnpORjOvlvsPmXg9ONbDuakChqrHSg6Y=",
+        "email": "U2FsdGVkX18m+nagxsicuXuVJWttE4RrB3RVXQwJQ3IiXpEjgWd5ca1CDnvfyTtL",
+        "business": false,
+        "category": "Education (تعلیم)",
+        "address": "Kondwa",
+        "description": "No description provided.",
+        "profession": "Educational Content Developer -"
+    },
+    {
+        "name": "Ms. / محترمہ Ridazehra Sabir Shamji",
+        "phone": "U2FsdGVkX18D5IU/I/kwO8h/9eInXtrZ/Dq1VqA6WZw=",
+        "email": "U2FsdGVkX18C1Jwm3IQmJrDoIbUh0KdOTipmW+4bC8m7MugJgUVU01xOQMnwPayW",
+        "business": false,
+        "category": "Medical and Healthcare (طبی اور صحت کی دیکھ بھال)",
+        "address": "222 Guruwar Peth Near Mutton Market Pune 411042",
+        "description": "No description provided.",
+        "profession": "Pharmacist -"
+    },
+    {
+        "name": "Mrs. / محترمہ Naziya Imran Ali Zaidi",
+        "phone": "U2FsdGVkX1/dd8645KMVW1Bk8haU12a5XzmM+Sr8Vps=",
+        "email": "U2FsdGVkX1+BTYGUawMX2YDjBrLlndHv1QnSlXlFsXS/RXL2BaGImLN4wKRaVUYZ",
+        "business": false,
+        "category": "Business and Finance (کاروبار اور مالیات)",
+        "address": "Brahma Estate A5-25 NIBM Road Kondhwa",
+        "description": "No description provided.",
+        "profession": "Human Resource Analyst-"
+    },
+    {
+        "name": "Mrs. / محترمہ Mubashshira Mohammad Abbas Shaikh",
+        "phone": "U2FsdGVkX1/s9nXtZY8f9PbmXjnw/IU0RMfN3zDabw8=",
+        "email": "U2FsdGVkX19UsuYJkFxDanF1VrAFT8nzkcAjETQ2ndD78t9qOfPHyyjPU7Bb9mJg",
+        "business": false,
+        "category": "Arts and Design (فن اور ڈیزائن)",
+        "address": "Kondhwa Pune",
+        "description": "No description provided.",
+        "profession": "Fashion Designer/Tailoring -"
+    },
+    {
+        "name": "Mrs. / محترمہ Mehrin zehra Ahmed raza Sayyed",
+        "phone": "U2FsdGVkX18zK/oqCMLS/s/7cZWYnTtOe7QnoyUvGRc=",
+        "email": "U2FsdGVkX1/OinZkacz/1VXBSclso/uWEip98hCgHMhAHYSMrBHOOm2KQuGsoLtV",
+        "business": false,
+        "category": "Education (تعلیم)",
+        "address": "692 guruwar peth dalal chowk opp Raja tower flat 102\nNear ar rehman heights",
+        "description": "No description provided.",
+        "profession": "Private Tutor -"
+    },
+    {
+        "name": "Mrs. / محترمہ Sayyed Rukaiya Begum Dost mohammed",
+        "phone": "U2FsdGVkX18pYafcYcZ2/NlXs5BYRCzN6kh6I/LSgKo=",
+        "email": "",
+        "business": false,
+        "category": "Education (تعلیم)",
+        "address": "Rizwan residency flat number 103 land number 5 Sai Baba Nagar kondwa Pune",
+        "description": "No description provided.",
+        "profession": "Teacher (Primary, Secondary, Higher Education) - استاد (پرائمری،"
+    },
+    {
+        "name": "Mrs. / محترمہ Pakeeza Rabab Sarwar Sayyed",
         "phone": "9309104694",
         "email": "pakeeza.sayyed.ps@gmail.com",
-        "profession": "Caterers & Kitchen",
         "business": true,
-        "description": "Delight your guests with authentic Hyderabadi cuisine from Mrs. Pakeeza Rabab Sarwar Sayyed. Expert caterers for home functions and events, offering delicious and traditional dishes that leave a lasting impression."
+        "category": "Business",
+        "address": "Sv No 5,Galli No 1\nMannat-e-fatima\nFlat # 402\nAshraf Nagar\nNear Alif Tower\nKondhwa Khurd\nPune 411048",
+        "description": "Specialized in authentic Hyderabadi biryani and Hyderababadi dishes,accepts orders for Majlis/Jashn/Home function.We cook for you at your place if required for hygiene and authenticity.",
+        "business_name": "Nawab's Zaiqa (Caterers & Kitchen)",
+        "business_type": "Other",
+        "business_size": "Small (1-10 employees)",
+        "business_description": "Specialized in authentic Hyderabadi biryani and Hyderababadi dishes,accepts orders for Majlis/Jashn/Home function.We cook for you at your place if required for hygiene and authenticity.",
+        "digital_presence": "None",
+        "website": "N/A"
+    },
+    {
+        "name": "Mrs. / محترمہ Shirin Mustafa Sayyed",
+        "phone": "8208357126",
+        "email": "sheroosayyed2006@gmail.com",
+        "business": true,
+        "category": "Business",
+        "address": "Fatima residency flat no 401, survey no 42. Near Noor masjid mitha nagar kondhwa khurd Pune Maharashtra 411048",
+        "description": "\"Experience the taste of home with our homemade tiffin service in Pune, offering delicious and freshly prepared meals in both vegetarian and non-vegetarian options. Each tiffin is crafted with love and high-quality ingredients, providing balanced, nutritious meals that feel just like home. From spicy curries to comforting dal, our menu changes daily, giving you a variety of flavors to enjoy. Ideal for students, working professionals, and anyone who misses a homestyle meal. Subscribe now for daily, weekly, or monthly plans, and let us bring the goodness of home-cooked food right to your doorstep!\"",
+        "business_name": "Zaika Tiffin Services",
+        "business_type": "Service",
+        "business_size": "Small (1-10 employees)",
+        "business_description": "\"Experience the taste of home with our homemade tiffin service in Pune, offering delicious and freshly prepared meals in both vegetarian and non-vegetarian options. Each tiffin is crafted with love and high-quality ingredients, providing balanced, nutritious meals that feel just like home. From spicy curries to comforting dal, our menu changes daily, giving you a variety of flavors to enjoy. Ideal for students, working professionals, and anyone who misses a homestyle meal. Subscribe now for daily, weekly, or monthly plans, and let us bring the goodness of home-cooked food right to your doorstep!\"",
+        "digital_presence": "None",
+        "website": "N/A"
+    },
+    {
+        "name": "Mr. / جناب Sayed Parvez Husain",
+        "phone": "U2FsdGVkX1899/NqMZZ98Tm0f6PzdeWmKZZjM/BrWyQ=",
+        "email": "U2FsdGVkX1/u/76TfxvNMk3maPMuN3GO3NQei+BTbmAmgMysk0K0Q1aQYEYT7OcD",
+        "business": false,
+        "category": "Business and Finance (کاروبار اور مالیات)",
+        "address": "Ajmera part Rashida apartment lane no 1 2nd floor flat no 205 kondhwa khurd Pune 48",
+        "description": "No description provided.",
+        "profession": "Stationary shop"
     },
     {
         "name": "Mr. / جناب Yadullah Abbas Shaikh",
-        "phone": "U2FsdGVkX18FLqBIDTikk2aphQPPdtL5nGTkxR5+jEM=",
-        "email": "U2FsdGVkX19ZMV32eNhTb9PMekj7rhY0Z7xw9By4hfoFX6wlmPGC8K7U1ZMrHUra",
-        "profession": "Recreation Worker -",
+        "phone": "U2FsdGVkX1/R/FpX8pjquofgXC+0Iuy8dzuS+3d2ETg=",
+        "email": "U2FsdGVkX18EHX//noXPoVIs+tglcAdFnA2sn6rtMjMeNYeewA4ExsC6Ri+P5EPL",
         "business": false,
-        "description": "Engaged in organizing and managing recreational activities and sports events."
-    },
-    {
-        "name": "Ms. / جنابra Ahmed Baig",
-        "phone": "U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=",
-        "email": "U2FsdGVkX18DTEnkec5us0I/JzQbAmtrGOVFwEcUpCo9Abt+ZcGtEICFe3WhG/do",
-        "profession": "Private Tutor",
-        "business": false,
-        "description": "Provides personalized tutoring for primary and secondary education."
+        "category": "Sports and Recreation (کھیل اور تفریح)",
+        "address": "Kondhwa",
+        "description": "No description provided.",
+        "profession": "Recreation Worker -"
     }
 ];
