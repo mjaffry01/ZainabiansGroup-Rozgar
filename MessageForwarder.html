@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Professionals Messaging</title>
+    <title>Professionals Search & Messaging</title>
+    <!-- Include JSON5 Library -->
+    <script src="https://unpkg.com/json5@2.2.3/dist/index.min.js"></script>
     <!-- Include CryptoJS Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
@@ -14,7 +16,7 @@
         }
         .container {
             background-color: #fff;
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             padding: 30px;
             border-radius: 8px;
@@ -33,7 +35,7 @@
             font-weight: bold;
             color: #555;
         }
-        input[type="text"], textarea {
+        input[type="file"], input[type="text"], select, textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
@@ -103,19 +105,51 @@
 </head>
 <body>
     <div class="container">
-        <h2>Professionals Messaging</h2>
+        <h2>Professionals Search & Messaging</h2>
+        
+        <!-- Section to Select Existing data.js File -->
+        <div class="section">
+            <label for="dataFile">Select Existing <code>data.js</code> File:</label>
+            <input type="file" id="dataFile" accept=".js">
+        </div>
+        
+        <!-- Section to Choose Search Type and Enter Encrypted Value -->
+        <div class="section">
+            <label for="searchType">Search By:</label>
+            <select id="searchType">
+                <option value="phone">Encrypted Phone Number</option>
+                <option value="email">Encrypted Email Address</option>
+            </select>
+        </div>
+        
+        <div class="section">
+            <label for="searchValue">Enter Encrypted Value:</label>
+            <input type="text" id="searchValue" placeholder="Paste the encrypted phone number or email address here...">
+        </div>
+        
+        <!-- Search Button -->
+        <button id="searchBtn">Search</button>
+        
+        <!-- Alert Messages for Search -->
+        <div id="alert" class="hidden alert"></div>
+        
+        <!-- Display Search Results -->
+        <h3>Search Result:</h3>
+        <div class="output" id="searchResult">No search performed yet.</div>
+        
+        <hr>
         
         <!-- New Section: Enter Your Message -->
         <h3>Enter Your Message</h3>
         <div class="section">
             <label for="userMessage">Paste Your Message:</label>
-            <textarea id="userMessage" placeholder="As Salamwalakum, my name is Ali. Please book a service call with Ms. / جنابra Ahmed Baig (U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=). The service I need is Private Tutor, and my phone number is 9810976296.">As Salamwalakum, my name is Ali. Please book a service call with Ms. / جنابra Ahmed Baig (U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=). The service I need is Private Tutor, and my phone number is 9810976296.</textarea>
+            <textarea id="userMessage" placeholder="As Salamwalakum, my name is Ali. Please book a service call with Ms. / جنابra Ahmed Baig (U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=). The service I need is Private Tutor, and my phone number is 9810976296."></textarea>
         </div>
         
         <!-- Process Message Button -->
         <button id="sendMessageBtn">Process and Prepare Message</button>
         
-        <!-- Alert Messages for Message Processing -->
+        <!-- Alert Messages for Message Sending -->
         <div id="messageAlert" class="hidden alert"></div>
         
         <!-- Display Message Processing Results -->
@@ -130,19 +164,9 @@
     </div>
 
     <script>
-        const ENCRYPTION_KEY = 'YourSecretKey123'; // Your actual encryption key
+        const ENCRYPTION_KEY = 'YourSecretKey123'; // Replace with your actual encryption key
 
-        // Embedded professionals data
-        const professionals = [
-            {
-                name: "Ms. / جنابra Ahmed Baig",
-                phone: "U2FsdGVkX1+C68ck2PLaln97FG8vt41nXZkm+yvGBAE=", // Encrypted phone number
-                email: "", // Add encrypted email if needed
-                profession: "Private Tutor",
-                business: false,
-                description: "Experienced private tutor in various subjects."
-            }
-        ];
+        let professionals = [];
 
         // Utility function to display alerts
         function showAlert(elementId, message, type) {
@@ -164,6 +188,23 @@
             alertBox.innerHTML = '';
         }
 
+        // Function to parse data.js file using JSON5
+        function parseDataJs(content) {
+            // Extract the array from "const professionals = [ ... ];"
+            const arrayMatch = content.match(/const\s+professionals\s*=\s*(\[\s*[\s\S]*\s*\]);/);
+            if (!arrayMatch) {
+                throw new Error("Invalid <code>data.js</code> format. Expected 'const professionals = [ ... ];'");
+            }
+            const arrayString = arrayMatch[1];
+            try {
+                // Use JSON5 to parse the array string
+                const professionalsArray = JSON5.parse(arrayString);
+                return professionalsArray;
+            } catch (e) {
+                throw new Error("Failed to parse the professionals array. Ensure it is valid JSON.");
+            }
+        }
+
         // Function to decrypt data using AES
         function decryptData(cipherText) {
             try {
@@ -175,19 +216,104 @@
             }
         }
 
-        // Function to sanitize phone numbers (remove any non-digit characters)
-        function sanitizePhoneNumber(phone) {
-            return phone.replace(/\D/g, '');
-        }
+        // Event listener for file upload
+        document.getElementById('dataFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
 
-        // Event listener for Process Message Button
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                try {
+                    professionals = parseDataJs(content);
+                    showAlert('alert', 'data.js file loaded successfully!', 'success');
+                } catch (error) {
+                    showAlert('alert', error.message, 'error');
+                    professionals = [];
+                }
+            };
+            reader.onerror = function() {
+                showAlert('alert', 'Failed to read the selected <code>data.js</code> file.', 'error');
+            };
+            reader.readAsText(file);
+        });
+
+        // Event listener for Search Button
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            hideAlert('alert');
+            const searchType = document.getElementById('searchType').value;
+            const searchValue = document.getElementById('searchValue').value.trim();
+
+            if (professionals.length === 0) {
+                showAlert('alert', 'Please upload and load a <code>data.js</code> file first.', 'error');
+                return;
+            }
+
+            if (!searchValue) {
+                showAlert('alert', 'Please enter an encrypted value to search.', 'error');
+                return;
+            }
+
+            // Perform the search
+            let matchedProfessional = null;
+            for (let prof of professionals) {
+                if (searchType === 'phone' && prof.phone === searchValue) {
+                    matchedProfessional = prof;
+                    break;
+                }
+                if (searchType === 'email' && prof.email === searchValue) {
+                    matchedProfessional = prof;
+                    break;
+                }
+            }
+
+            if (!matchedProfessional) {
+                showAlert('alert', 'No matching professional found for the provided encrypted value.', 'error');
+                document.getElementById('searchResult').textContent = 'No matching professional found.';
+                return;
+            }
+
+            // Decrypt phone and email if profession is non-business
+            let displayPhone = matchedProfessional.phone;
+            let displayEmail = matchedProfessional.email;
+
+            if (!matchedProfessional.business) {
+                if (matchedProfessional.phone) {
+                    const decryptedPhone = decryptData(matchedProfessional.phone);
+                    displayPhone = decryptedPhone ? decryptedPhone : 'Decryption failed.';
+                }
+                if (matchedProfessional.email) {
+                    const decryptedEmail = decryptData(matchedProfessional.email);
+                    displayEmail = decryptedEmail ? decryptedEmail : 'Decryption failed.';
+                }
+            }
+
+            // Prepare the display data
+            const displayData = {
+                Name: matchedProfessional.name,
+                'Phone Number': displayPhone,
+                'Email Address': displayEmail,
+                'Profession': matchedProfessional.profession,
+                'Business': matchedProfessional.business,
+                'Description': matchedProfessional.description
+            };
+
+            // Display the result
+            document.getElementById('searchResult').textContent = JSON.stringify(displayData, null, 4);
+            showAlert('alert', 'Professional found and information decrypted (if applicable).', 'success');
+        });
+
+        // New Functionality: Handle Sending Message from Input
         document.getElementById('sendMessageBtn').addEventListener('click', () => {
             hideAlert('messageAlert');
+            hideAlert('alert'); // Hide any previous alerts
             document.getElementById('sendButtons').classList.add('hidden'); // Hide send buttons initially
             const userMessage = document.getElementById('userMessage').value.trim();
 
             if (professionals.length === 0) {
-                showAlert('messageAlert', 'No professionals data available.', 'error');
+                showAlert('messageAlert', 'Please upload and load a <code>data.js</code> file first.', 'error');
                 return;
             }
 
@@ -196,9 +322,12 @@
                 return;
             }
 
+            // Normalize the message by replacing line breaks and multiple spaces with a single space
+            const normalizedMessage = userMessage.replace(/\s+/g, ' ').trim();
+
             // Parse the message to extract details
-            const messageRegex = /As Salamwalakum, my name is\s+([^\.]+)\.\s+Please book a service call with\s+([^()]+)\s+\(([^)]+)\)\.\s+The service I need is\s+([^,]+),\s+and my phone number is\s+(\d{10})\./i;
-            const match = userMessage.match(messageRegex);
+            const messageRegex = /As Salamwalakum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\(([^)]+)\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
+            const match = normalizedMessage.match(messageRegex);
 
             if (!match) {
                 showAlert('messageAlert', 'Message format is incorrect. Please ensure it follows the specified format.', 'error');
@@ -236,17 +365,17 @@
                 return;
             }
 
-            // Prepare the message to send
-            const sendMessage = `As Salamwalakum, my name is ${requesterName}. The service I need is ${serviceRequirement}. My phone number is ${requesterPhone}.`;
+            // Prepare the message to send (Updated as per your requirement)
+            const sendMessage = `As Salam wala kum as slam ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
 
-            // Display the matched professional's details, including decrypted phone number
+            // Display the matched professional's details
             const displayData = {
                 'Requester Name': requesterName,
                 'Requester Phone Number': requesterPhone,
                 'Service Requirement': serviceRequirement,
                 'Matched Professional Name': matchedProfessional.name,
                 'Matched Professional Encrypted Phone Number': matchedProfessional.phone,
-                'Matched Professional Decrypted Phone Number': decryptedServiceProviderPhone, // **Added Decrypted Phone Number**
+                'Decrypted Service Provider Phone Number': decryptedServiceProviderPhone,
                 'Profession': matchedProfessional.profession,
                 'Business': matchedProfessional.business,
                 'Description': matchedProfessional.description
@@ -288,6 +417,11 @@
             window.open(smsUrl, '_blank');
             showAlert('messageAlert', 'SMS message opened in a new tab.', 'success');
         });
+
+        // Function to sanitize phone numbers (remove any non-digit characters)
+        function sanitizePhoneNumber(phone) {
+            return phone.replace(/\D/g, '');
+        }
     </script>
 </body>
 </html>
