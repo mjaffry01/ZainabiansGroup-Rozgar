@@ -214,11 +214,21 @@ function displayBusinessOwners() {
                     data-name="${professional.name}" 
                     data-phone="${professional.phone}" 
                     data-email="${professional.email}" 
-                    data-profession="${professional.profession}">
+                   
                     <i class="fas fa-store-alt"></i>
                     <div>
-                        <strong>${professional.name}</strong><br>
-                        <span>${professional.profession}</span><br>
+                         <strong>
+                            <button type="button" class="btn btn-primary business-owner-button" 
+                                   
+                                    data-phone="${professional.phone || 'N/A'}" 
+                                    data-email="${professional.email || 'N/A'}" 
+                                   >
+                                ${professional.name}
+                            </button>
+                        </strong><br>
+                       <span>${professional.business_type }</span><br>
+                       <span><u> ${professional.business_name}</u></span><br>
+                        <span><strong>${professional.address}</strong></span><br>
                         <small>${professional.description}</small>
                     </div>
                 </li>
