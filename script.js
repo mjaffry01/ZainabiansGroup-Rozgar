@@ -265,7 +265,8 @@ function displayBusinessOwners() {
 
     professionals.forEach(professional => {
         if (professional.business) {
-            businessList.append(`
+            // Create the LI element
+            let li = $(`
                 <li class="list-group-item business-owner-item" 
                     data-name="${professional.name}" 
                     data-phone="${professional.phone}" 
@@ -281,10 +282,38 @@ function displayBusinessOwners() {
                                 ${professional.name}
                             </button>
                         </strong><br>
-                        <span>${professional.description}</span>
+                        <span class="description">${professional.description}</span>
                     </div>
                 </li>
             `);
+
+            // Append the LI to the businessList
+            businessList.append(li);
+
+            // Now check if the description overflows
+            let description = li.find('.description');
+
+            // Use setTimeout to ensure the DOM has updated
+            setTimeout(function() {
+                if (description[0].scrollHeight > description[0].clientHeight) {
+                    // Text overflows
+                    let readMore = $('<i class="fas fa-chevron-down read-more-icon"></i>');
+                    description.after(readMore);
+
+                    // Bind click event to toggle the description
+                    readMore.on('click', function() {
+                        if (description.hasClass('expanded')) {
+                            // Collapse the text
+                            description.removeClass('expanded');
+                            readMore.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                        } else {
+                            // Expand the text
+                            description.addClass('expanded');
+                            readMore.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                        }
+                    });
+                }
+            }, 0);
         }
     });
 }
@@ -513,3 +542,48 @@ $(document).ready(function() {
         return false;
     });
 });
+
+
+
+// ============================
+// 7. Minimize and Maximize Modal
+// ============================
+
+/**
+ * Handles minimizing the modal.
+ */
+function minimizeModal() {
+    $('#businessOwnerModal').addClass('minimized');
+    $('#minimizeModal').addClass('d-none');
+    $('#maximizeModal').removeClass('d-none');
+}
+
+/**
+ * Handles maximizing the modal.
+ */
+function maximizeModal() {
+    $('#businessOwnerModal').removeClass('minimized');
+    $('#maximizeModal').addClass('d-none');
+    $('#minimizeModal').removeClass('d-none');
+}
+
+// Event listener for Minimize Button
+$('#minimizeModal').on('click', function() {
+    minimizeModal();
+});
+
+// Event listener for Maximize Button
+$('#maximizeModal').on('click', function() {
+    maximizeModal();
+});
+
+// Optional: Allow clicking on the minimized modal header to maximize
+$('#businessOwnerModal').on('click', '.modal-header', function(event) {
+    // Prevent maximizing when clicking on minimize/maximize buttons
+    if (!$(event.target).closest('.modal-controls').length) {
+        if ($('#businessOwnerModal').hasClass('minimized')) {
+            maximizeModal();
+        }
+    }
+});
+

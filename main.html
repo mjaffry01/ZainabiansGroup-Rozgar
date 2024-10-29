@@ -22,6 +22,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom JavaScript -->
      
 </head>
@@ -133,29 +136,57 @@
         <p>&copy; 2024 Zainabians SP Group. All rights reserved.</p>
     </footer>
 
+    
     <!-- Business Owner Details Modal -->
-    <div class="modal fade" id="businessOwnerModal" tabindex="-1" aria-labelledby="businessOwnerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="businessOwnerModalLabel">Business Owner Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Name:</strong> <span id="modalName"></span></p>
-            <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
-            <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-          </div>
-          <div class="modal-footer flex-column flex-sm-row">
-            <button type="button" class="btn btn-primary m-1" id="modalWhatsAppButton"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-            <button type="button" class="btn btn-success m-1" id="modalCallButton"><i class="fas fa-phone"></i> Call</button>
-            <button type="button" class="btn btn-info m-1" id="modalSMSButton"><i class="fas fa-comment"></i> Message</button>
-            <button type="button" class="btn btn-warning m-1" id="modalEmailButton"><i class="fas fa-envelope"></i> Email</button>
-            <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal">Close</button>
-          </div>
+<!-- Business Owner Details Modal -->
+<div class="modal fade" id="businessOwnerModal" tabindex="-1" aria-labelledby="businessOwnerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="businessOwnerModalLabel">Business Owner Details</h5>
+        <div class="modal-controls ms-auto">
+          <button type="button" class="btn btn-secondary btn-sm me-1" id="minimizeModal" aria-label="Minimize Modal">
+            <i class="fas fa-window-minimize"></i>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm me-1 d-none" id="maximizeModal" aria-label="Maximize Modal">
+            <i class="fas fa-window-maximize"></i>
+          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
       </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="mb-2"><strong>Name:</strong> <span id="modalName"></span></div>
+        <div class="mb-2"><strong>Phone:</strong> <span id="modalPhone"></span></div>
+        <div class="mb-2"><strong>Email:</strong> <span id="modalEmail"></span></div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="modal-footer flex-column flex-sm-row">
+        <!-- Action Buttons -->
+        <button type="button" class="btn btn-primary m-1 action-button" data-action="whatsapp" aria-label="Contact via WhatsApp">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </button>
+        <button type="button" class="btn btn-success m-1 action-button" data-action="call" aria-label="Call">
+          <i class="fas fa-phone"></i> Call
+        </button>
+        <button type="button" class="btn btn-info m-1 action-button" data-action="sms" aria-label="Send Message">
+          <i class="fas fa-comment"></i> Message
+        </button>
+        <button type="button" class="btn btn-warning m-1 action-button" data-action="email" aria-label="Send Email">
+          <i class="fas fa-envelope"></i> Email
+        </button>
+        <!-- Close Button -->
+        <button type="button" class="btn btn-secondary m-1" data-bs-dismiss="modal" aria-label="Close Modal">Close</button>
+      </div>
     </div>
+  </div>
+</div>
+
+
 
     <!-- User Input Modal -->
     <div class="modal fade" id="userInputModal" tabindex="-1" role="dialog" aria-labelledby="userInputModalLabel" aria-hidden="true">
