@@ -1,11 +1,12 @@
+// script.js
+
 // ============================
 // 1. Centralized Configuration
 // ============================
 
-// Centralized Group Number without '+'
 const GROUP_PHONE = '919650068218'; // Zainabians Group WhatsApp and SMS number
 
-// Centralized Message Templates
+// Message Templates
 const MESSAGE_TEMPLATE_WHATSAPP = `As Salamwalakum, my name is {requesterName}. 
 Please book a service call with {serviceProviderName} ({serviceProviderPhone}). 
 The service I need is {profession}, and my phone number is {requesterPhone}.`;
@@ -15,7 +16,45 @@ Please book a service call with {serviceProviderName} ({serviceProviderPhone}).
 The service I need is {profession}, and my phone number is {requesterPhone}.`;
 
 // ============================
-// 2. Utility Functions
+// 2. Synonyms Dictionary
+// ============================
+
+const professionSynonyms = {
+    "teacher": ["tutor", "instructor", "educator", "mentor", "professor", "lecturer"],
+    "dentist": ["dental surgeon", "oral health specialist", "teeth specialist", "orthodontist"],
+    "private tutor": ["tutor", "educator", "instructor", "mentor", "teacher"],
+    "astrophysicist": ["space scientist", "astronomer", "cosmologist", "space researcher"],
+    "engineer": ["mechanical engineer", "civil engineer", "electrical engineer", "software engineer", "technologist"],
+    "lawyer": ["attorney", "legal advisor", "counselor", "solicitor", "barrister"],
+    "doctor": ["physician", "surgeon", "general practitioner", "medical doctor", "clinician"],
+    "nurse": ["registered nurse", "nursing assistant", "nurse practitioner", "medical assistant", "caregiver"],
+    "chef": ["cook", "culinary expert", "kitchen staff", "pastry chef", "line cook"],
+    "programmer": ["developer", "software engineer", "coder", "web developer", "computer programmer"],
+    "psychologist": ["therapist", "counselor", "mental health professional", "behavioral therapist"],
+    "accountant": ["bookkeeper", "auditor", "financial analyst", "tax advisor"],
+    "architect": ["designer", "urban planner", "building designer", "interior architect"],
+    "pharmacist": ["chemist", "druggist", "pharmacy technician", "prescription specialist"],
+    "plumber": ["pipefitter", "pipe layer", "irrigation technician", "sewer technician"],
+    "electrician": ["electrical technician", "line installer", "electrical engineer", "cable technician"],
+    "mechanic": ["automotive technician", "repair technician", "vehicle technician", "machine operator"],
+    "scientist": ["researcher", "biologist", "chemist", "physicist", "data scientist"],
+    "artist": ["painter", "sculptor", "illustrator", "visual artist", "graphic designer"],
+    "photographer": ["cameraman", "photojournalist", "videographer", "image editor"],
+    "writer": ["author", "journalist", "copywriter", "content creator", "novelist"],
+    "marketing specialist": ["marketer", "digital marketer", "content strategist", "advertising specialist", "brand manager"],
+    "business analyst": ["analyst", "data analyst", "market researcher", "strategic planner"],
+    "data scientist": ["data analyst", "machine learning engineer", "data engineer", "AI specialist"],
+    "translator": ["interpreter", "linguist", "language specialist", "transcriber"],
+    "social worker": ["counselor", "family support worker", "community service worker", "case manager"],
+    "real estate agent": ["realtor", "property consultant", "broker", "real estate advisor"],
+    "fitness trainer": ["personal trainer", "exercise coach", "fitness instructor", "gym trainer"],
+    "massage therapist": ["masseuse", "masseur", "bodywork specialist", "spa therapist"],
+    "event planner": ["event coordinator", "wedding planner", "party organizer", "meeting planner"]
+    // Add more professions and their synonyms as needed
+};
+
+// ============================
+// 3. Utility Functions
 // ============================
 
 /**
@@ -70,6 +109,23 @@ function formatMessage(template, data) {
  */
 function sanitizePhoneNumber(phone) {
     return phone.replace(/\D/g, ''); // Removes all non-digit characters
+}
+
+/**
+ * Finds the standard profession term based on the search query using synonyms.
+ * @param {string} query - The user's search query.
+ * @returns {string} - The standard profession term or the original query if no synonym found.
+ */
+function findStandardProfession(query) {
+    // Iterate through the synonyms dictionary
+    for (let standardTerm in professionSynonyms) {
+        let synonyms = professionSynonyms[standardTerm].map(s => s.toLowerCase());
+        if (synonyms.includes(query.toLowerCase())) {
+            return standardTerm;
+        }
+    }
+    // If no synonym matches, return the original query
+    return query;
 }
 
 /**
@@ -197,7 +253,7 @@ function processUserInput() {
 }
 
 // ============================
-// 3. Display Functions
+// 4. Display Functions
 // ============================
 
 /**
@@ -214,22 +270,18 @@ function displayBusinessOwners() {
                     data-name="${professional.name}" 
                     data-phone="${professional.phone}" 
                     data-email="${professional.email}" 
-                   
+                    data-profession="${professional.profession}">
                     <i class="fas fa-store-alt"></i>
                     <div>
-                         <strong>
+                        <strong>
                             <button type="button" class="btn btn-primary business-owner-button" 
-                                   
                                     data-phone="${professional.phone || 'N/A'}" 
                                     data-email="${professional.email || 'N/A'}" 
-                                   >
+                                    data-profession="${professional.profession || 'N/A'}">
                                 ${professional.name}
                             </button>
                         </strong><br>
-                       <span>${professional.business_type }</span><br>
-                       <span><u> ${professional.business_name}</u></span><br>
-                        <span><strong>${professional.address}</strong></span><br>
-                        <small>${professional.description}</small>
+                        <span>${professional.description}</span>
                     </div>
                 </li>
             `);
@@ -283,7 +335,7 @@ function displayProfessionals(data) {
 }
 
 // ============================
-// 4. Event Handlers
+// 5. Event Handlers
 // ============================
 
 // Handle form submission from the modal
@@ -292,27 +344,53 @@ $('#userInputForm').on('submit', function(event) {
     processUserInput();
 });
 
-// Filter results based on profession input
+// Debounce Timer for Search Input
+let debounceTimer;
+
+/**
+ * Handles the search input with debounce and minimum query length.
+ */
 $('#searchInput').on('input', function() {
-    let searchQuery = $(this).val().trim().toLowerCase();
-
-    // If search box is empty, clear the results table
-    if (searchQuery === "") {
-        $('#resultsTable').empty(); // Clear table
-        return;
-    }
-
-    // Filter professionals who are not business owners
-    let filteredData = professionals.filter(prof => {
-        return prof.profession.toLowerCase().includes(searchQuery) && !prof.business;
-    });
-
-    displayProfessionals(filteredData);
+    clearTimeout(debounceTimer);
+    const searchQuery = $(this).val().trim().toLowerCase();
+    
+    debounceTimer = setTimeout(() => {
+        // Only perform search if input length >= 3
+        if (searchQuery.length < 2) {
+            $('#resultsTable').empty(); // Clear table
+            console.log("Search input less than 3 characters. Clearing results.");
+            return;
+        }
+        
+        console.log("Search Query:", searchQuery); // Debugging
+        
+        // Normalize the search query using synonyms
+        const standardProfession = findStandardProfession(searchQuery);
+        console.log("Standard Profession:", standardProfession); // Debugging
+        
+        // Filter professionals based on normalized profession
+        let filteredData = professionals.filter(prof => {
+            // Check if 'profession' exists and is a string
+            if (typeof prof.profession !== 'string') {
+                console.warn(`Professional ${prof.name} has an invalid or missing 'profession' property.`);
+                return false; // Exclude this professional from the filtered results
+            }
+            // Check if profession matches the search query or its synonyms
+            const professionMatch = prof.profession.toLowerCase().includes(standardProfession.toLowerCase());
+            const notBusiness = !prof.business;
+            return professionMatch && notBusiness;
+        });
+        
+        console.log("Filtered Data:", filteredData); // Debugging
+        
+        displayProfessionals(filteredData);
+    }, 300); // Debounce delay of 300ms
 });
 
 // Display all professionals when the Show All button is clicked
 $('#showAllButton').on('click', function() {
-    displayProfessionals(professionals.filter(prof => !prof.business));
+    const allProfessionals = professionals.filter(prof => !prof.business);
+    displayProfessionals(allProfessionals);
 });
 
 // Handle WhatsApp button click in professionals table
@@ -404,11 +482,17 @@ $('#modalEmailButton').on('click', function() {
 });
 
 // ============================
-// 5. Initialization
+// 6. Initialization
 // ============================
 
 // Display business owners on page load
 $(document).ready(function() {
+    // Check if 'professionals' is defined and is an array
+    if (typeof professionals === 'undefined' || !Array.isArray(professionals)) {
+        alert('Failed to load professionals data. Please ensure data.js is correctly loaded.');
+        return;
+    }
+
     displayBusinessOwners();
 });
 
