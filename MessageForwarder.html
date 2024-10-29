@@ -22,7 +22,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        h2, h3 {
+        h2, h3, h4 {
             text-align: center;
             color: #333;
         }
@@ -35,7 +35,7 @@
             font-weight: bold;
             color: #555;
         }
-        input[type="file"], input[type="text"], select, textarea {
+        input[type="text"], select, textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
@@ -94,12 +94,19 @@
             font-size: 90%;
         }
         .send-buttons {
-            display: flex;
-            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .send-buttons h4 {
+            margin-bottom: 10px;
             margin-top: 20px;
         }
         .send-buttons button {
             width: 48%;
+            margin-right: 2%;
+            margin-bottom: 10px;
+        }
+        .send-buttons button:nth-child(2n) {
+            margin-right: 0;
         }
     </style>
 </head>
@@ -107,11 +114,7 @@
     <div class="container">
         <h2>Professionals Search & Messaging</h2>
         
-        <!-- Section to Select Existing data.js File -->
-        <div class="section">
-            <label for="dataFile">Select Existing <code>data.js</code> File:</label>
-            <input type="file" id="dataFile" accept=".js">
-        </div>
+        <!-- Removed the File Upload Section -->
         
         <!-- Section to Choose Search Type and Enter Encrypted Value -->
         <div class="section">
@@ -147,7 +150,7 @@
         </div>
         
         <!-- Process Message Button -->
-        <button id="sendMessageBtn">Process and Prepare Message</button>
+        <button id="sendMessageBtn">Process and Prepare Messages</button>
         
         <!-- Alert Messages for Message Sending -->
         <div id="messageAlert" class="hidden alert"></div>
@@ -158,15 +161,26 @@
         
         <!-- Send Buttons (WhatsApp & SMS) -->
         <div class="send-buttons hidden" id="sendButtons">
-            <button id="sendWhatsAppBtn">Send via WhatsApp</button>
-            <button id="sendSmsBtn">Send via SMS</button>
+            <h4>Send to Service Provider</h4>
+            <button id="sendWhatsAppProviderBtn">Send via WhatsApp</button>
+            <button id="sendSmsProviderBtn">Send via SMS</button>
+            
+            <h4>Send to Requester</h4>
+            <button id="sendWhatsAppRequesterBtn">Send via WhatsApp</button>
+            <button id="sendSmsRequesterBtn">Send via SMS</button>
         </div>
     </div>
+
+    <!-- Include data.js Before the Main Script -->
+    <script src="data.js"></script>
 
     <script>
         const ENCRYPTION_KEY = 'YourSecretKey123'; // Replace with your actual encryption key
 
-        let professionals = [];
+        // Ensure 'professionals' is loaded from data.js
+        if (typeof professionals === 'undefined' || !Array.isArray(professionals)) {
+            alert('Failed to load professionals data. Please ensure data.js is correctly loaded.');
+        }
 
         // Utility function to display alerts
         function showAlert(elementId, message, type) {
@@ -188,23 +202,6 @@
             alertBox.innerHTML = '';
         }
 
-        // Function to parse data.js file using JSON5
-        function parseDataJs(content) {
-            // Extract the array from "const professionals = [ ... ];"
-            const arrayMatch = content.match(/const\s+professionals\s*=\s*(\[\s*[\s\S]*\s*\]);/);
-            if (!arrayMatch) {
-                throw new Error("Invalid <code>data.js</code> format. Expected 'const professionals = [ ... ];'");
-            }
-            const arrayString = arrayMatch[1];
-            try {
-                // Use JSON5 to parse the array string
-                const professionalsArray = JSON5.parse(arrayString);
-                return professionalsArray;
-            } catch (e) {
-                throw new Error("Failed to parse the professionals array. Ensure it is valid JSON.");
-            }
-        }
-
         // Function to decrypt data using AES
         function decryptData(cipherText) {
             try {
@@ -216,38 +213,14 @@
             }
         }
 
-        // Event listener for file upload
-        document.getElementById('dataFile').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                try {
-                    professionals = parseDataJs(content);
-                    showAlert('alert', 'data.js file loaded successfully!', 'success');
-                } catch (error) {
-                    showAlert('alert', error.message, 'error');
-                    professionals = [];
-                }
-            };
-            reader.onerror = function() {
-                showAlert('alert', 'Failed to read the selected <code>data.js</code> file.', 'error');
-            };
-            reader.readAsText(file);
-        });
-
         // Event listener for Search Button
         document.getElementById('searchBtn').addEventListener('click', () => {
             hideAlert('alert');
             const searchType = document.getElementById('searchType').value;
             const searchValue = document.getElementById('searchValue').value.trim();
 
-            if (professionals.length === 0) {
-                showAlert('alert', 'Please upload and load a <code>data.js</code> file first.', 'error');
+            if (!professionals || professionals.length === 0) {
+                showAlert('alert', 'No professionals data loaded. Please ensure data.js is correctly loaded.', 'error');
                 return;
             }
 
@@ -312,8 +285,8 @@
             document.getElementById('sendButtons').classList.add('hidden'); // Hide send buttons initially
             const userMessage = document.getElementById('userMessage').value.trim();
 
-            if (professionals.length === 0) {
-                showAlert('messageAlert', 'Please upload and load a <code>data.js</code> file first.', 'error');
+            if (!professionals || professionals.length === 0) {
+                showAlert('messageAlert', 'No professionals data loaded. Please ensure data.js is correctly loaded.', 'error');
                 return;
             }
 
@@ -325,8 +298,27 @@
             // Normalize the message by replacing line breaks and multiple spaces with a single space
             const normalizedMessage = userMessage.replace(/\s+/g, ' ').trim();
 
-            // Parse the message to extract details
-            const messageRegex = /As Salamwalakum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\(([^)]+)\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
+            // Extract the encrypted data between parentheses
+            const encryptedDataMatch = normalizedMessage.match(/\(([^)]+)\)/);
+            if (!encryptedDataMatch) {
+                showAlert('messageAlert', 'Failed to extract encrypted data from the message.', 'error');
+                document.getElementById('messageResult').textContent = 'Extraction of encrypted data failed.';
+                return;
+            }
+
+            const encryptedServiceProviderPhone = encryptedDataMatch[1].trim();
+
+            // Decrypt the service provider's phone number
+            const decryptedServiceProviderPhone = decryptData(encryptedServiceProviderPhone);
+
+            if (!decryptedServiceProviderPhone) {
+                showAlert('messageAlert', 'Failed to decrypt the service provider\'s phone number.', 'error');
+                document.getElementById('messageResult').textContent = 'Decryption failed.';
+                return;
+            }
+
+            // Extract the rest of the details using regex
+            const messageRegex = /As Salamwalakum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\([^)]+\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
             const match = normalizedMessage.match(messageRegex);
 
             if (!match) {
@@ -337,18 +329,8 @@
 
             const requesterName = match[1].trim();
             const serviceProviderName = match[2].trim();
-            const encryptedServiceProviderPhone = match[3].trim();
-            const serviceRequirement = match[4].trim();
-            const requesterPhone = match[5].trim();
-
-            // Decrypt the service provider's phone number
-            const decryptedServiceProviderPhone = decryptData(encryptedServiceProviderPhone);
-
-            if (!decryptedServiceProviderPhone) {
-                showAlert('messageAlert', 'Failed to decrypt the service provider\'s phone number.', 'error');
-                document.getElementById('messageResult').textContent = 'Decryption failed.';
-                return;
-            }
+            const serviceRequirement = match[3].trim();
+            const requesterPhone = match[4].trim();
 
             // Search for the professional with the encrypted phone number
             let matchedProfessional = null;
@@ -365,8 +347,11 @@
                 return;
             }
 
-            // Prepare the message to send (Updated as per your requirement)
-            const sendMessage = `As Salam wala kum as slam ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
+            // Prepare the message to send to the service provider
+            const providerMessage = `As Salam wala kum as slam ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
+
+            // Prepare the message to send to the requester
+            const requesterMessage = `Dear ${requesterName}, your request for ${serviceRequirement} with ${serviceProviderName} has been received. The service provider will contact you shortly. Thank you for using our service.`;
 
             // Display the matched professional's details
             const displayData = {
@@ -382,46 +367,72 @@
             };
 
             document.getElementById('messageResult').textContent = JSON.stringify(displayData, null, 4);
-            showAlert('messageAlert', 'Professional found and message prepared.', 'success');
+            showAlert('messageAlert', 'Professional found and messages prepared.', 'success');
 
-            // Store the message and matched professional details for sending
+            // Store the messages and phone numbers for sending
             window.currentSendMessage = {
-                message: sendMessage,
-                serviceProviderPhone: decryptedServiceProviderPhone
+                providerMessage: providerMessage,
+                requesterMessage: requesterMessage,
+                providerPhone: decryptedServiceProviderPhone,
+                requesterPhone: requesterPhone
             };
 
             // Show the send buttons
             document.getElementById('sendButtons').classList.remove('hidden');
         });
 
-        // Event listener for Send via WhatsApp
-        document.getElementById('sendWhatsAppBtn').addEventListener('click', () => {
-            if (!window.currentSendMessage) {
-                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
-                return;
-            }
-
-            const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.serviceProviderPhone)}?text=${encodeURIComponent(window.currentSendMessage.message)}`;
-            window.open(whatsappUrl, '_blank');
-            showAlert('messageAlert', 'WhatsApp message opened in a new tab.', 'success');
-        });
-
-        // Event listener for Send via SMS
-        document.getElementById('sendSmsBtn').addEventListener('click', () => {
-            if (!window.currentSendMessage) {
-                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
-                return;
-            }
-
-            const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.serviceProviderPhone)}?body=${encodeURIComponent(window.currentSendMessage.message)}`;
-            window.open(smsUrl, '_blank');
-            showAlert('messageAlert', 'SMS message opened in a new tab.', 'success');
-        });
-
         // Function to sanitize phone numbers (remove any non-digit characters)
         function sanitizePhoneNumber(phone) {
             return phone.replace(/\D/g, '');
         }
+
+        // Event listener for Send via WhatsApp to Provider
+        document.getElementById('sendWhatsAppProviderBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.providerPhone)}?text=${encodeURIComponent(window.currentSendMessage.providerMessage)}`;
+            window.open(whatsappUrl, '_blank');
+            showAlert('messageAlert', 'WhatsApp message to provider opened in a new tab.', 'success');
+        });
+
+        // Event listener for Send via SMS to Provider
+        document.getElementById('sendSmsProviderBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.providerPhone)}?body=${encodeURIComponent(window.currentSendMessage.providerMessage)}`;
+            window.open(smsUrl, '_blank');
+            showAlert('messageAlert', 'SMS message to provider opened in a new tab.', 'success');
+        });
+
+        // Event listener for Send via WhatsApp to Requester
+        document.getElementById('sendWhatsAppRequesterBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.requesterPhone)}?text=${encodeURIComponent(window.currentSendMessage.requesterMessage)}`;
+            window.open(whatsappUrl, '_blank');
+            showAlert('messageAlert', 'WhatsApp message to requester opened in a new tab.', 'success');
+        });
+
+        // Event listener for Send via SMS to Requester
+        document.getElementById('sendSmsRequesterBtn').addEventListener('click', () => {
+            if (!window.currentSendMessage) {
+                showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
+                return;
+            }
+
+            const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.requesterPhone)}?body=${encodeURIComponent(window.currentSendMessage.requesterMessage)}`;
+            window.open(smsUrl, '_blank');
+            showAlert('messageAlert', 'SMS message to requester opened in a new tab.', 'success');
+        });
     </script>
 </body>
 </html>
