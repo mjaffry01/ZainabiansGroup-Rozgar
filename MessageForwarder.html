@@ -318,7 +318,7 @@
             }
 
             // Extract the rest of the details using regex
-            const messageRegex = /As Salamwalakum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\([^)]+\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
+            const messageRegex = /As Assalamunalaikum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\([^)]+\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
             const match = normalizedMessage.match(messageRegex);
 
             if (!match) {
@@ -348,7 +348,7 @@
             }
 
             // Prepare the message to send to the service provider
-            const providerMessage = `As Salam wala kum as slam ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
+            const providerMessage = `Assalamunalaikum ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
 
             // Prepare the message to send to the requester
             const requesterMessage = `Dear ${requesterName}, your request for ${serviceRequirement} with ${serviceProviderName} has been received. The service provider will contact you shortly. Thank you for using our service.`;
