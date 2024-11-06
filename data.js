@@ -7,8 +7,6 @@ const professionals = [
         "category": "Business",
         "address": "Inam Nagar Kondhwa Budruk Near Vijay Sales",
         "description": "<p>🌟 <strong>Welcome to Kashmir Stocks Store!</strong> 🌟 Embark on a journey through our exclusive collection of premium Kashmiri dry fruits, featuring delectable mamra almonds and crisp walnuts. Each item embodies the authentic spirit of Kashmir, delivering unmatched quality and flavor in every bite. 🏞 Indulge in our globally acclaimed Kashmiri saffron threads and elevate your skincare routine with our sumptuous saffron-infused face scrubs and washes. 🌼 Our nutrient-rich Kashmiri walnut oil, almond oil (badaam oil), and apricot oil are meticulously crafted to nourish your skin and promote overall health. 🍃 Discover our exquisite handcrafted items, from elegant ponchos to distinctive keychains, each showcasing the rich cultural heritage of Kashmir. 🎁 Experience the rare Sheelajeet from Ladakh, celebrated for its potent health benefits and scarcity. We source the finest quality directly from the breathtaking Himalayas. 🛍️ Whether you're seeking Kashmiri hand-embroidered fabrics, semi-stitched garments, ready-made kaftans, trendy tops, elegant sarees, or stylish handbags, we've got you covered. Customize your orders to perfectly match your personal style and requirements. ✨ Why Choose Kashmir Stocks? Authentic Excellence: We ensure only the finest ingredients and materials grace our shelves. Cultural Heritage: Every product narrates a story of Kashmir's vibrant culture and traditions. Personalized Experience: Customize your purchases to reflect your unique style and needs. Let Kashmir Stocks Store bring a slice of Kashmir's paradise right to your doorstep with every purchase! 🏔️</p>",
-
-
         "business_name": "Kashmir Stocks",
         "business_type": "Retail",
         "business_size": "Small (1-10 employees)",
@@ -214,5 +212,15 @@ const professionals = [
         "address": "Kondhwa",
         "description": "No description provided.",
         "profession": "Recreation Worker -"
+    },
+    {
+        "name": "Ms. / محترمہ Khatija Mohammed Ali Meer",
+        "phone": "U2FsdGVkX19UB/FWog3sF8GsRhRSSJKA2JVNRy1/lcg=",
+        "email": "U2FsdGVkX18IHwZOihk3L1j/4lKKUTY2rGC2L2OtmIVnUwKOyKbgjkd6UcRdlnrn",
+        "business": false,
+        "category": "Education (تعلیم)",
+        "address": "Hajjan Mehboobi Residency, kondhwa khurd, pune-48",
+        "description": "No description provided.",
+        "profession": "Private Tutor -"
     }
 ];
