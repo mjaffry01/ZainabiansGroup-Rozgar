@@ -587,3 +587,28 @@ $('#businessOwnerModal').on('click', '.modal-header', function(event) {
     }
 });
 
+$(document).on('click', '.action-button', function() {
+    const action = $(this).data('action');
+    const serviceProviderPhone = $('#modalPhone').text();
+    const serviceProviderName = $('#modalName').text();
+    const profession = $('#modalProfession').text(); // Assuming you have this in your modal
+    const email = $('#modalEmail').text();
+
+    switch(action) {
+        case 'whatsapp':
+            handleCommunication('whatsapp', serviceProviderPhone, serviceProviderName, profession);
+            break;
+        case 'call':
+            window.location.href = `tel:${GROUP_PHONE}`;
+            break;
+        case 'sms':
+            handleCommunication('sms', serviceProviderPhone, serviceProviderName, profession);
+            break;
+        case 'email':
+            handleCommunication('email', null, null, profession, email);
+            break;
+        default:
+            console.warn('Unknown action:', action);
+    }
+});
+
