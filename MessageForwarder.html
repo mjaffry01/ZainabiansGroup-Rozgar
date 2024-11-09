@@ -176,12 +176,12 @@
 
     <script>
         const ENCRYPTION_KEY = 'YourSecretKey123'; // Replace with your actual encryption key
-
+    
         // Ensure 'professionals' is loaded from data.js
         if (typeof professionals === 'undefined' || !Array.isArray(professionals)) {
             alert('Failed to load professionals data. Please ensure data.js is correctly loaded.');
         }
-
+    
         // Utility function to display alerts
         function showAlert(elementId, message, type) {
             const alertBox = document.getElementById(elementId);
@@ -194,41 +194,45 @@
             }
             alertBox.classList.remove('hidden');
         }
-
+    
         // Utility function to hide alerts
         function hideAlert(elementId) {
             const alertBox = document.getElementById(elementId);
             alertBox.classList.add('hidden');
             alertBox.innerHTML = '';
         }
-
+    
         // Function to decrypt data using AES
         function decryptData(cipherText) {
             try {
                 const bytes = CryptoJS.AES.decrypt(cipherText, ENCRYPTION_KEY);
                 const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+                if (!decryptedData) {
+                    throw new Error('Decryption resulted in empty string.');
+                }
                 return decryptedData;
             } catch (e) {
+                console.error('Decryption error:', e);
                 return null;
             }
         }
-
+    
         // Event listener for Search Button
         document.getElementById('searchBtn').addEventListener('click', () => {
             hideAlert('alert');
             const searchType = document.getElementById('searchType').value;
             const searchValue = document.getElementById('searchValue').value.trim();
-
+    
             if (!professionals || professionals.length === 0) {
                 showAlert('alert', 'No professionals data loaded. Please ensure data.js is correctly loaded.', 'error');
                 return;
             }
-
+    
             if (!searchValue) {
                 showAlert('alert', 'Please enter an encrypted value to search.', 'error');
                 return;
             }
-
+    
             // Perform the search
             let matchedProfessional = null;
             for (let prof of professionals) {
@@ -241,17 +245,17 @@
                     break;
                 }
             }
-
+    
             if (!matchedProfessional) {
                 showAlert('alert', 'No matching professional found for the provided encrypted value.', 'error');
                 document.getElementById('searchResult').textContent = 'No matching professional found.';
                 return;
             }
-
+    
             // Decrypt phone and email if profession is non-business
             let displayPhone = matchedProfessional.phone;
             let displayEmail = matchedProfessional.email;
-
+    
             if (!matchedProfessional.business) {
                 if (matchedProfessional.phone) {
                     const decryptedPhone = decryptData(matchedProfessional.phone);
@@ -262,7 +266,7 @@
                     displayEmail = decryptedEmail ? decryptedEmail : 'Decryption failed.';
                 }
             }
-
+    
             // Prepare the display data
             const displayData = {
                 Name: matchedProfessional.name,
@@ -272,68 +276,71 @@
                 'Business': matchedProfessional.business,
                 'Description': matchedProfessional.description
             };
-
+    
             // Display the result
             document.getElementById('searchResult').textContent = JSON.stringify(displayData, null, 4);
             showAlert('alert', 'Professional found and information decrypted (if applicable).', 'success');
         });
-
+    
         // New Functionality: Handle Sending Message from Input
         document.getElementById('sendMessageBtn').addEventListener('click', () => {
             hideAlert('messageAlert');
             hideAlert('alert'); // Hide any previous alerts
             document.getElementById('sendButtons').classList.add('hidden'); // Hide send buttons initially
             const userMessage = document.getElementById('userMessage').value.trim();
-
+    
             if (!professionals || professionals.length === 0) {
                 showAlert('messageAlert', 'No professionals data loaded. Please ensure data.js is correctly loaded.', 'error');
                 return;
             }
-
+    
             if (!userMessage) {
                 showAlert('messageAlert', 'Please enter a message to process.', 'error');
                 return;
             }
-
+    
             // Normalize the message by replacing line breaks and multiple spaces with a single space
             const normalizedMessage = userMessage.replace(/\s+/g, ' ').trim();
+    
+            // Updated regular expression to correctly capture all data
+            const messageRegex = /As\s+.*?alam.*?kum,\s*my name is\s+(.+?)\.\s*Please book a service call with\s+(.+?)\s*\((.+?)\)\.\s*The service I need is\s+(.+?),?\s*and my phone number is\s+(\d+)\.?/i;
 
-            // Extract the encrypted data between parentheses
-            const encryptedDataMatch = normalizedMessage.match(/\(([^)]+)\)/);
-            if (!encryptedDataMatch) {
-                showAlert('messageAlert', 'Failed to extract encrypted data from the message.', 'error');
-                document.getElementById('messageResult').textContent = 'Extraction of encrypted data failed.';
-                return;
-            }
-
-            const encryptedServiceProviderPhone = encryptedDataMatch[1].trim();
-
-            // Decrypt the service provider's phone number
-            const decryptedServiceProviderPhone = decryptData(encryptedServiceProviderPhone);
-
-            if (!decryptedServiceProviderPhone) {
-                showAlert('messageAlert', 'Failed to decrypt the service provider\'s phone number.', 'error');
-                document.getElementById('messageResult').textContent = 'Decryption failed.';
-                return;
-            }
-
-            // Extract the rest of the details using regex
-            const messageRegex = /As\s+.*?alam.*?kum,\s*my name is\s+([^\.]+?)\.\s*Please book a service call with\s+(.+?)\s*\(([^)]+)\)\.\s*The service I need is\s+(.+?)\s*,?\s*and my phone number is\s+(\d{10})\.?/i;
-
-
+    
             const match = normalizedMessage.match(messageRegex);
-
+    
             if (!match) {
                 showAlert('messageAlert', 'Message format is incorrect. Please ensure it follows the specified format.', 'error');
                 document.getElementById('messageResult').textContent = 'Invalid message format.';
                 return;
             }
-
+    
+            // Correctly assign variables from captured groups
             const requesterName = match[1].trim();
             const serviceProviderName = match[2].trim();
-            const serviceRequirement = match[3].trim();
-            const requesterPhone = match[4].trim();
-
+            const encryptedServiceProviderPhone = match[3].trim();
+            const serviceRequirement = match[4].trim();
+            const requesterPhoneInput = match[5].trim();
+    
+            // Check if the requester's phone number is encrypted (assumes encrypted data starts with 'U2Fsd')
+            let requesterPhone = requesterPhoneInput;
+            if (requesterPhoneInput.startsWith('U2Fsd')) {
+                requesterPhone = decryptData(requesterPhoneInput);
+                if (!requesterPhone) {
+                    showAlert('messageAlert', 'Failed to decrypt the requester\'s phone number.', 'error');
+                    document.getElementById('messageResult').textContent = 'Requester phone number decryption failed.';
+                    return;
+                }
+            }
+    
+            // Decrypt the service provider's phone number
+            const decryptedServiceProviderPhone = decryptData(encryptedServiceProviderPhone);
+    
+            if (!decryptedServiceProviderPhone) {
+                showAlert('messageAlert', 'Failed to decrypt the service provider\'s phone number.', 'error');
+                document.getElementById('messageResult').textContent = 'Service provider phone number decryption failed.';
+                return;
+            }
+    
             // Search for the professional with the encrypted phone number
             let matchedProfessional = null;
             for (let prof of professionals) {
@@ -342,23 +349,23 @@
                     break;
                 }
             }
-
+    
             if (!matchedProfessional) {
                 showAlert('messageAlert', 'No matching professional found for the provided encrypted phone number.', 'error');
                 document.getElementById('messageResult').textContent = 'No matching professional found.';
                 return;
             }
-
+    
             // Prepare the message to send to the service provider
             const providerMessage = `Assalamunalaikum ${serviceProviderName}, I am from Zainabians SP Group. We have a request from ${requesterName} (${requesterPhone}) for ${serviceRequirement}. Please connect. Regards, Zainabians SP Group.`;
-
+    
             // Prepare the message to send to the requester
             const requesterMessage = `Dear ${requesterName}, your request for ${serviceRequirement} with ${serviceProviderName} has been received. The service provider will contact you shortly. Thank you for using our service.`;
-
+    
             // Display the matched professional's details
             const displayData = {
                 'Requester Name': requesterName,
-                'Requester Phone Number': requesterPhone,
+                'Requester Phone Number': requesterPhoneInput, // Show original input
                 'Service Requirement': serviceRequirement,
                 'Matched Professional Name': matchedProfessional.name,
                 'Matched Professional Encrypted Phone Number': matchedProfessional.phone,
@@ -367,10 +374,10 @@
                 'Business': matchedProfessional.business,
                 'Description': matchedProfessional.description
             };
-
+    
             document.getElementById('messageResult').textContent = JSON.stringify(displayData, null, 4);
             showAlert('messageAlert', 'Professional found and messages prepared.', 'success');
-
+    
             // Store the messages and phone numbers for sending
             window.currentSendMessage = {
                 providerMessage: providerMessage,
@@ -378,63 +385,63 @@
                 providerPhone: decryptedServiceProviderPhone,
                 requesterPhone: requesterPhone
             };
-
+    
             // Show the send buttons
             document.getElementById('sendButtons').classList.remove('hidden');
         });
-
+    
         // Function to sanitize phone numbers (remove any non-digit characters)
         function sanitizePhoneNumber(phone) {
             return phone.replace(/\D/g, '');
         }
-
+    
         // Event listener for Send via WhatsApp to Provider
         document.getElementById('sendWhatsAppProviderBtn').addEventListener('click', () => {
             if (!window.currentSendMessage) {
                 showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
                 return;
             }
-
+    
             const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.providerPhone)}?text=${encodeURIComponent(window.currentSendMessage.providerMessage)}`;
             window.open(whatsappUrl, '_blank');
             showAlert('messageAlert', 'WhatsApp message to provider opened in a new tab.', 'success');
         });
-
+    
         // Event listener for Send via SMS to Provider
         document.getElementById('sendSmsProviderBtn').addEventListener('click', () => {
             if (!window.currentSendMessage) {
                 showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
                 return;
             }
-
+    
             const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.providerPhone)}?body=${encodeURIComponent(window.currentSendMessage.providerMessage)}`;
             window.open(smsUrl, '_blank');
             showAlert('messageAlert', 'SMS message to provider opened in a new tab.', 'success');
         });
-
+    
         // Event listener for Send via WhatsApp to Requester
         document.getElementById('sendWhatsAppRequesterBtn').addEventListener('click', () => {
             if (!window.currentSendMessage) {
                 showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
                 return;
             }
-
+    
             const whatsappUrl = `https://wa.me/${sanitizePhoneNumber(window.currentSendMessage.requesterPhone)}?text=${encodeURIComponent(window.currentSendMessage.requesterMessage)}`;
             window.open(whatsappUrl, '_blank');
             showAlert('messageAlert', 'WhatsApp message to requester opened in a new tab.', 'success');
         });
-
+    
         // Event listener for Send via SMS to Requester
         document.getElementById('sendSmsRequesterBtn').addEventListener('click', () => {
             if (!window.currentSendMessage) {
                 showAlert('messageAlert', 'No message to send. Please process a message first.', 'error');
                 return;
             }
-
+    
             const smsUrl = `sms:${sanitizePhoneNumber(window.currentSendMessage.requesterPhone)}?body=${encodeURIComponent(window.currentSendMessage.requesterMessage)}`;
             window.open(smsUrl, '_blank');
             showAlert('messageAlert', 'SMS message to requester opened in a new tab.', 'success');
         });
     </script>
-</body>
+    </body>
 </html>
