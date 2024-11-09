@@ -318,7 +318,9 @@
             }
 
             // Extract the rest of the details using regex
-            const messageRegex = /As Assalamunalaikum,\s*my name is\s+([^\.]+)\.\s*Please book a service call with\s+([^()]+)\s+\([^)]+\)\.\s*The service I need is\s+([^,\-]+)[\-,]*\s*and my phone number is\s+(\d{10})\.?/i;
+            const messageRegex = /As\s+.*?alam.*?kum,\s*my name is\s+([^\.]+?)\.\s*Please book a service call with\s+(.+?)\s*\(([^)]+)\)\.\s*The service I need is\s+(.+?)\s*,?\s*and my phone number is\s+(\d{10})\.?/i;
+
+
             const match = normalizedMessage.match(messageRegex);
 
             if (!match) {
