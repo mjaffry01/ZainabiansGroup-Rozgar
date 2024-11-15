@@ -222,5 +222,15 @@ const professionals = [
         "address": "Hajjan Mehboobi Residency, kondhwa khurd, pune-48",
         "description": "No description provided.",
         "profession": "Private Tutor -"
+    },
+    {
+        "name": "Mr. / جناب shameel Abbbas",
+        "phone": "U2FsdGVkX1/6y9Qi3Cig1p0X71wMvWvSmRkJT6Y2wNA=",
+        "email": "U2FsdGVkX18RXGLp1u1QIjTW03vRrLT2H1E6QWyzR+njhi04N7XN2gBu8o4ceTeP",
+        "business": false,
+        "category": "Information Technology (آئی ٹی)",
+        "address": "KOndwa",
+        "description": "No description provided.",
+        "profession": "contenet Development"
     }
 ];
