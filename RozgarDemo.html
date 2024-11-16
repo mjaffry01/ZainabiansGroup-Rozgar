@@ -312,7 +312,55 @@
             </div>
         </div>
 
-        
+        <!-- Social Media Sharing Section -->
+<div class="container mt-5">
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5><i class="fas fa-share-alt"></i> Share this Project</h5>
+        </div>
+        <div class="card-body text-center">
+            <!-- Facebook Share Button -->
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://mjaffry01.github.io/ZainabiansGroup-Rozgar/" 
+               target="_blank" class="btn btn-primary m-2">
+                <i class="fab fa-facebook-f"></i> Share on Facebook
+            </a>
+
+            <!-- Twitter Share Button -->
+            <a href="https://twitter.com/intent/tweet?url=https://mjaffry01.github.io/ZainabiansGroup-Rozgar/&text=Check%20out%20this%20Rozgar%20System%20Project!"
+               target="_blank" class="btn btn-info m-2">
+                <i class="fab fa-twitter"></i> Share on Twitter
+            </a>
+
+            <!-- LinkedIn Share Button -->
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://mjaffry01.github.io/ZainabiansGroup-Rozgar/&title=Rozgar%20System&summary=Leveraging%20Data%20Security%20and%20Optimized%20Access"
+               target="_blank" class="btn btn-primary m-2">
+                <i class="fab fa-linkedin"></i> Share on LinkedIn
+            </a>
+
+            <!-- WhatsApp Share Button -->
+            <a href="https://api.whatsapp.com/send?text=Check%20out%20this%20Rozgar%20System%20Project:%20https://mjaffry01.github.io/ZainabiansGroup-Rozgar/"
+               target="_blank" class="btn btn-success m-2">
+                <i class="fab fa-whatsapp"></i> Share on WhatsApp
+            </a>
+
+            <!-- Copy Link Button -->
+            <button class="btn btn-secondary m-2" onclick="copyLink()">
+                <i class="fas fa-copy"></i> Copy Link
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Copying Link -->
+<script>
+function copyLink() {
+    const link = "https://mjaffry01.github.io/ZainabiansGroup-Rozgar/";
+    navigator.clipboard.writeText(link).then(() => {
+        alert('Link copied to clipboard!');
+    });
+}
+</script>
+
     </div>
 
     <!-- JavaScript for Chart Rendering -->
